@@ -15,7 +15,8 @@ available through the PATH. Refer to the prerequisites in the above libraries fo
 
 ---
 
-The script requires the [Ninja build system](https://github.com/ninja-build/ninja.git)
+The script requires [CMake](https://cmake.org/) (tested with 3.5.1 on Windows & Linux),
+the [Ninja build system](https://github.com/ninja-build/ninja.git),
 and Python 2.7 (Python 3.\* not suppported).
 
 Before running `makelibs.py`, ensure the following environment variables are set:

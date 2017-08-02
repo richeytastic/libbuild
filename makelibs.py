@@ -9,25 +9,26 @@ class ModuleBuilder():
     """Platform agnostic building of C++ modules using CMake."""
 
     def __init__(self, parentDirs, cmakeDir, mname, makeDebug):
+        self.__cmakeDir = cmakeDir
+        self.__mname = mname
+        self.__buildType = 'Debug' if makeDebug else 'Release'
+
         self.__DEV_DIR = parentDirs[0] + mname + os.path.sep
         if not os.path.exists(self.__DEV_DIR):
             print "The module's source directory can't be found at {0}!".format(self.__DEV_DIR)
             sys.exit(1)
 
-        self.__buildType = 'Debug' if makeDebug else 'Release'
-        self.__BUILD_DIR = parentDirs[1] + mname + os.path.sep + self.__buildType.lower()
         self.__INSTALL_DIR = parentDirs[2] + mname + os.path.sep
+        if not os.path.exists( self.__INSTALL_DIR): # Create the install directory if not already present
+            os.mkdir( self.__INSTALL_DIR)
 
-        self.__cmakeDir = cmakeDir
-        self.__mname = mname
-
-        # Create the module build directory if not already present
-        if not os.path.exists( self.__BUILD_DIR):
+        self.__BUILD_DIR = parentDirs[1] + mname + os.path.sep
+        if not os.path.exists( self.__BUILD_DIR): # Create the module build directory if not already present
             os.mkdir( self.__BUILD_DIR)
 
-        # Create the module install directory if not already present
-        if not os.path.exists( self.__INSTALL_DIR):
-            os.mkdir( self.__INSTALL_DIR)
+        self.__BUILD_DIR += self.__buildType.lower()
+        if not os.path.exists( self.__BUILD_DIR): # Create the build type directory if not already present
+            os.mkdir( self.__BUILD_DIR)
 
 
     def makeCMakeFiles( self):

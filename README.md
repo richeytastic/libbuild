@@ -30,7 +30,7 @@ sometimes included with other programs) aren't found instead:
 - `QT5_CMAKE_PATH`        Parent directory for Qt5Config.cmake (e.g. "D:/Qt/5.7/msvc2015\_64/lib/cmake/Qt5")
 
 This repository also comes with a convenient batch scipt for Windows ("makelibs.bat") but
-this requires the environment variable PYTHON\_EXE to be set to the python.exe you want to use
+this requires environment variable `PYTHON_EXE` to be set to the python.exe you want to use
 (makelibs.bat is just a wrapper for makelibs.py).
 
 The `makelibs.py` script will create subdirectories inside the build and installation

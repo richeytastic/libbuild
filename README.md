@@ -24,6 +24,15 @@ Before running `makelibs.py`, ensure the following environment variables are set
 - `BUILD_PARENT_DIR`      Parent directory for out of source builds of the libraries.
 - `INSTALL_PARENT_DIR`    Parent directory for where the libraries will be installed.
 
+In addition, on Windows, set the following environment variables to the particular Qt5
+distribution to build against. This is so that conflicting Qt5 libraries (which are
+sometimes included with other programs) aren't found instead:
+- `QT5_CMAKE_PATH`        Parent directory for Qt5Config.cmake (e.g. "D:/Qt/5.7/msvc2015\_64/lib/cmake/Qt5")
+
+This repository also comes with a convenient batch scipt for Windows ("makelibs.bat") but
+this requires the environment variable PYTHON\_EXE to be set to the python.exe you want to use
+(makelibs.bat is just a wrapper for makelibs.py).
+
 The `makelibs.py` script will create subdirectories inside the build and installation
 parent directories, with names corresponding to the selected libraries.
 Within these created library subdirectories, the necessary headers, import binaries,

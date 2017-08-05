@@ -29,7 +29,7 @@ add_definitions( -D_WIN32_WINNT=0x0601)
 if(WIN32)
     set( CMAKE_SYSTEM_VERSION 8.1)
 endif()
-message( STATUS "OS Name build target: ${CMAKE_SYSTEM_NAME}")
+message( STATUS "OS Name build target:    ${CMAKE_SYSTEM_NAME}")
 message( STATUS "OS Version build target: ${CMAKE_SYSTEM_VERSION}")
 
 

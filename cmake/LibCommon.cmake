@@ -23,6 +23,15 @@ endif()
 unset( CMAKE_BUILD_TYPE_LOWER)
 set( CMAKE_DEBUG_POSTFIX ${_dsuffix})
 
+# Add definitions for Windows 7 build target (SDK 8.1 support Win 7 and up)
+add_definitions( -DWINVER=0x0601)
+add_definitions( -D_WIN32_WINNT=0x0601)
+if(WIN32)
+    set( CMAKE_SYSTEM_VERSION 8.1)
+endif()
+message( STATUS "OS Name build target: ${CMAKE_SYSTEM_NAME}")
+message( STATUS "OS Version build target: ${CMAKE_SYSTEM_VERSION}")
+
 
 if(WITH_TESTUTILS)
     set( TestUtils_DIR "${LIB_PRE_REQS}/TestUtils/cmake" CACHE PATH "Location of TestUtilsConfig.cmake")

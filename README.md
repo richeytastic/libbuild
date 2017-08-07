@@ -4,14 +4,17 @@ Provides a script (`makelibs.py`) that wraps CMake to configure,
 build, and install the following libraries on both Linux and Windows:
 - [rlib](../../../rlib/blob/master/README.md)
 - [rFeatures](../../../rFeatures/blob/master/README.md)
-- [rModelIO](../../../rModelIO/blob/master/README.md)
 - [rVTK](../../../rVTK/blob/master/README.md)
 - [QTools](../../../QTools/blob/master/README.md)
+- [rModelIO](../../../rModelIO/blob/master/README.md)
 - [FaceTools](../../../FaceTools/blob/master/README.md)
 - TestUtils (not available on GitHub at time of writing)
 
 Dependencies for these libraries must already be met, with the necessary libraries
 available through the PATH. Refer to the prerequisites in the above libraries for details.
+In particular though, each library in the list above depends upon those prior to it so the
+build and install order should process the libraries in this order. The provided script
+does this automatically.
 
 ---
 

@@ -151,7 +151,7 @@ def getEnvVars():
 
 
 def getLibraryList():
-    libList = ['rlib', 'rFeatures', 'rModelIO', 'rVTK', 'QTools', 'FaceTools', 'TestUtils']  # Essential
+    libList = ['rlib', 'rFeatures', 'rVTK', 'QTools', 'rModelIO', 'FaceTools', 'TestUtils']  # Essential
     #libList.extend(['rLearning', 'rPascalVOC', 'tinyxml', 'rHoughVoting', 'rEarthmine'])    # Not required
     return libList
 

@@ -23,14 +23,35 @@ the [Ninja build system](https://github.com/ninja-build/ninja.git),
 and Python 2.7 (Python 3.\* not suppported).
 
 Before running `makelibs.py`, ensure the following environment variables are set:
-- `DEV_PARENT_DIR`        Parent directory for the library source directories.
-- `BUILD_PARENT_DIR`      Parent directory for out of source builds of the libraries.
-- `INSTALL_PARENT_DIR`    Parent directory for where the libraries will be installed.
+- `DEV_PARENT_DIR`
 
-In addition, on Windows, set the following environment variables to the particular Qt5
+    Parent directory for the library source directories.
+
+- `BUILD_PARENT_DIR`
+
+    Parent directory for out of source builds of the libraries.
+
+- `INSTALL_PARENT_DIR`
+
+    Parent directory for where the libraries will be installed.
+
+The following environment variables will also be read if set:
+- `PDFLATEX_EXE`
+
+    Location of pdflatex. Part of the [MiKTeK](https://miktex.org/) distribution on Windows, but usually
+    installed in /usr/bin if installed systemwide on Linux as part of [TeX Live](https://www.tug.org/texlive/)
+
+- `IDTF_CONVERTER_EXE`
+
+    Location of [IDTFConverter](www2.iaas.msu.ru/tmp/u3d/u3d-1.4.5_current.zip)
+    (with thanks to Michail Vidiassov)
+
+In addition, on Windows, set the following environment variable to the particular Qt5
 distribution to build against. This is so that conflicting Qt5 libraries (which are
 sometimes included with other programs) aren't found instead:
-- `QT5_CMAKE_PATH`        Parent directory for Qt5Config.cmake (e.g. "D:/Qt/5.7/msvc2015\_64/lib/cmake/Qt5")
+- `QT5_CMAKE_PATH`
+
+    Parent directory for Qt5Config.cmake (e.g. "D:/Qt/5.7/msvc2015\_64/lib/cmake/Qt5")
 
 This repository also comes with a convenient batch scipt for Windows ("makelibs.bat") but
 this requires environment variable `PYTHON_EXE` to be set to the python.exe you want to use

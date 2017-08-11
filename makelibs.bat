@@ -6,10 +6,18 @@ echo No python executable set! Set PYTHON_EXE to the location of python.
 goto :eof
 
 :check_dev
-
-if not "%DEV_PARENT_DIR%" == "" goto :exec
+if not "%DEV_PARENT_DIR%" == "" goto :check_idtf
 echo The DEV_PARENT_DIR environment variable is not set!
 goto :eof
+
+:check_idtf
+if not "%IDTF_CONVERTER_EXE%" == "" goto :check_pdflatex
+echo IDTFConverter.exe not set! Won't be able to convert to U3D format (rModelIO).
+
+:check_pdflatex
+if not "%PDFLATEX_EXE%" == "" goto :exec
+echo pdflatex.exe not set! Won't be able to generate PDFs (rModelIO).
+
 
 :exec
 
@@ -17,15 +25,10 @@ setlocal
 
 set _python="%PYTHON_EXE%"
 set _makelibs="%DEV_PARENT_DIR%\libbuild\makelibs.py"
-
-REM Make all the libraries if nothing specified.
-if "%1" == "" goto :make_all
 set _lib=%1
-call %_python% %_makelibs% %_lib%
-goto :eof
+set _debug=%2
 
-:make_all
-call %_python% %_makelibs% all debug
+call %_python% %_makelibs% %_lib% %_debug%
 goto :eof
 
 endlocal

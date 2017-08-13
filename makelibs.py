@@ -49,12 +49,14 @@ class ModuleBuilder():
         print ' + Created {0}'.format( configFile)
 
         # Copy across the other CMake config files
-        shutil.copy( "{0}LibCommon.cmake".format( self.__cmakeDir), libCMakeDir)
-        shutil.copy( "{0}LibInstall.cmake".format( self.__cmakeDir), libCMakeDir)
+        shutil.copy( "{0}FindLibs.cmake".format( self.__cmakeDir), libCMakeDir)
+        shutil.copy( "{0}LinkLibs.cmake".format( self.__cmakeDir), libCMakeDir)
+        shutil.copy( "{0}LinkTargets.cmake".format( self.__cmakeDir), libCMakeDir)
         shutil.copy( "{0}Macros.cmake".format( self.__cmakeDir), libCMakeDir)
 
-        print ' + Created {0}LibCommon.cmake'.format( libCMakeDir)
-        print ' + Created {0}LibInstall.cmake'.format( libCMakeDir)
+        print ' + Created {0}FindLibs.cmake'.format( libCMakeDir)
+        print ' + Created {0}LinkLibs.cmake'.format( libCMakeDir)
+        print ' + Created {0}LinkTargets.cmake'.format( libCMakeDir)
         print ' + Created {0}Macros.cmake'.format( libCMakeDir)
 
 

@@ -1,6 +1,8 @@
+include("$ENV{DEV_PARENT_DIR}/libbuild/cmake/LinkTargets.cmake")
+include("$ENV{DEV_PARENT_DIR}/libbuild/cmake/Macros.cmake")
+
 # Since Windows doesn't have the concept of RPATH's for import libraries, we need to copy over
 # all the required DLLs from all of the libraries used into the project's binary folder.
-include("$ENV{DEV_PARENT_DIR}/libbuild/cmake/Macros.cmake")
 if(WIN32)
     if(WITH_RLIB)
         copy_over_dll( rlib)
@@ -32,11 +34,13 @@ if(WIN32)
 
     set( tdest "${${PROJECT_NAME}_BINARY_DIR}/bin")
 
+    get_msvc_version( _msvcv)   # Get the MSVC version
+
     if(WITH_BOOST)
         # The suffix for the boost dlls
-        set( bsuff "-vc140-mt-1_59.dll")
+        set( bsuff "-vc${_msvcv}0-mt-${Boost_LIB_VERSION}.dll")
         if(IS_DEBUG)
-            set( bsuff "-vc140-mt-gd-1_59.dll")
+            set( bsuff "-vc${_msvcv}0-mt-gd-${Boost_LIB_VERSION}.dll")
         endif()
         file( COPY "${BOOST_LIBRARYDIR}/boost_system${bsuff}"     DESTINATION "${tdest}") 
         file( COPY "${BOOST_LIBRARYDIR}/boost_filesystem${bsuff}" DESTINATION "${tdest}") 
@@ -48,6 +52,9 @@ if(WIN32)
 
     if(WITH_OPENCV)
         set( ocvs "2413.dll")
+        if(IS_DEBUG)
+            set( ocvs "2413d.dll")
+        endif()
         file( COPY "${OpenCV_BIN}/opencv_core${ocvs}"       DESTINATION "${tdest}")
         file( COPY "${OpenCV_BIN}/opencv_highgui${ocvs}"    DESTINATION "${tdest}")
         file( COPY "${OpenCV_BIN}/opencv_contrib${ocvs}"    DESTINATION "${tdest}")
@@ -61,7 +68,12 @@ if(WIN32)
         # Copy in TBB DLL - OpenCV apparently doesn't reference it directly anywhere in its CMake
         # configuration files! Not really sure how it's managing to link it in, but it is
         # (I'm sure I've missed something obvious that will allow me to make this less version specific).
-        file( COPY "${LIB_PRE_REQS}/tbb2017_20170604oss/bin/intel64/vc14/tbb.dll" DESTINATION "${tdest}")
+        set(TBBbin "${LIB_PRE_REQS}/tbb2017_20170604oss/bin/intel64/vc${_msvcv}")
+        if(IS_DEBUG)
+            file( COPY "${TBBbin}/tbb_debug.dll" DESTINATION "${tdest}")
+        else()
+            file( COPY "${TBBbin}/tbb.dll" DESTINATION "${tdest}")
+        endif()
     endif()
 
     if(WITH_VTK)
@@ -121,15 +133,15 @@ if(WIN32)
         set( MPFR_DLL "${GMP_LIBRARY_DIR}/libmpfr-4.dll")
         file( COPY "${GMP_DLL}"  DESTINATION "${tdest}")
         file( COPY "${MPFR_DLL}" DESTINATION "${tdest}")
-        set( cgsuff "-vc140-mt-4.10.dll")
+        set( cgsuff "-vc${_msvcv}0-mt-4.10.dll")
         if(IS_DEBUG)
-            set( cgsuff "-vc140-mt-gd-4.10.dll")
+            set( cgsuff "-vc${_msvcv}0-mt-gd-4.10.dll")
         endif()
         file( COPY "${CGAL_BIN}/CGAL${cgsuff}" DESTINATION "${tdest}")
     endif()
 
     if(WITH_ASSIMP)
-        file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc140-mt.dll" DESTINATION "${tdest}")
+        file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc${_msvcv}0-mt.dll" DESTINATION "${tdest}")
     endif()
 
     if(WITH_QT)
@@ -139,5 +151,5 @@ if(WIN32)
         file( COPY "${QT_BIN}/Qt5Widgets${_dsuffix}.dll" DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5SQL${_dsuffix}.dll"     DESTINATION "${tdest}")
     endif()
-
 endif()
+

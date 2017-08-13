@@ -6,18 +6,9 @@ echo No python executable set! Set PYTHON_EXE to the location of python.
 goto :eof
 
 :check_dev
-if not "%DEV_PARENT_DIR%" == "" goto :check_idtf
+if not "%DEV_PARENT_DIR%" == "" goto :exec
 echo The DEV_PARENT_DIR environment variable is not set!
 goto :eof
-
-:check_idtf
-if not "%IDTF_CONVERTER_EXE%" == "" goto :check_pdflatex
-echo IDTFConverter.exe not set! Won't be able to convert to U3D format (rModelIO).
-
-:check_pdflatex
-if not "%PDFLATEX_EXE%" == "" goto :exec
-echo pdflatex.exe not set! Won't be able to generate PDFs (rModelIO).
-
 
 :exec
 

@@ -141,8 +141,10 @@ if(WIN32)
     endif()
 
     if(WITH_ASSIMP)
-        file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc${_msvcv}0-mt.dll" DESTINATION "${tdest}")
+        file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc${_msvcv}0-mt${_dsuffix}.dll" DESTINATION "${tdest}")
     endif()
+
+    # Note that CPD under Windows compiles to a static library so no DLL to copy over.
 
     if(WITH_QT)
         set(QT_BIN "${Qt5_DIR}/../../../bin")
@@ -150,6 +152,33 @@ if(WIN32)
         file( COPY "${QT_BIN}/Qt5GUI${_dsuffix}.dll"     DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5Widgets${_dsuffix}.dll" DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5SQL${_dsuffix}.dll"     DESTINATION "${tdest}")
+        # Ensure that the platform plugin qwindows.dll is installed into the "platforms" folder.
+        file( COPY "${QT_BIN}/../plugins/platforms/qwindows${_dsuffix}.dll" DESTINATION "${tdest}/platforms")
     endif()
-endif()
 
+    # Install Windows specific gubbins
+    # DLL redirection to ensure that DLLs in the application directory are loaded
+    file( WRITE "${PROJECT_NAME}.exe.local" "Exists to ensure Windows loads DLLs from this directory.")
+    file( COPY "${PROJECT_NAME}.exe.local" DESTINATION "${tdest}")
+
+    # Copy in the MSVC runtime dlls
+    set( MSVC_REDIST "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/redist")
+    set( C_DLL_DIR "${MSVC_REDIST}/x64/Microsoft.VC140.CRT")
+    if( IS_DEBUG)
+        set( C_DLL_DIR "${MSVC_REDIST}/Debug_NonRedist/x64/Microsoft.VC140.DebugCRT")
+    endif()
+
+    #file( COPY "${C_DLL_DIR}/msvcp140${_dsuffix}.dll" DESTINATION "${tdest}")
+    #file( COPY "${C_DLL_DIR}/vcruntime140${_dsuffix}.dll" DESTINATION "${tdest}")
+    #file( COPY "${C_DLL_DIR}/concrt140${_dsuffix}.dll" DESTINATION "${tdest}")
+    #file( COPY "${C_DLL_DIR}/vccorlib140${_dsuffix}.dll" DESTINATION "${tdest}")
+    file( GLOB MSVC_REDIST "${C_DLL_DIR}/*${_dsuffix}.dll")
+    file( COPY ${MSVC_REDIST} DESTINATION "${tdest}")
+
+    file( GLOB UCRT_DLLS "C:/Program Files (x86)/Windows Kits/10/Redist/ucrt/DLLs/x64/*.dll")
+    file( COPY ${UCRT_DLLS} DESTINATION "${tdest}")
+
+    # Older C/C++ runtime also required for Matlab
+    #install( FILES "C:/Windows/System32/msvcp100.dll" DESTINATION ${INSTALL_LIBS_DIR})
+    #install( FILES "C:/Windows/System32/msvcr100.dll" DESTINATION ${INSTALL_LIBS_DIR})
+endif()

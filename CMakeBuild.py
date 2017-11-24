@@ -32,7 +32,7 @@ class EnvDirs():
         if not os.environ.has_key('INSTALL_PARENT_DIR'):
             print 'Env. var. INSTALL_PARENT_DIR must exist and specify the parent installation directory.'
             return ""
-        idir = os.environ['INSTALL_PARENT_DIR'] + os.path.sep
+        idir = os.environ['INSTALL_PARENT_DIR']
         if not os.path.isdir(idir):
             print errStr.format(idir, "INSTALL_PARENT_DIR", "install")
             idir = ""
@@ -43,7 +43,7 @@ class EnvDirs():
         if not os.environ.has_key('BUILD_PARENT_DIR'):
             print 'Env. var. BUILD_PARENT_DIR must exist and specify the parent build directory.'
             return ""
-        bdir = os.environ['BUILD_PARENT_DIR'] + os.path.sep
+        bdir = os.environ['BUILD_PARENT_DIR']
         if not os.path.isdir(bdir):
             print errStr.format(bdir, "BUILD_PARENT_DIR", "build")
             bdir = ""
@@ -54,7 +54,7 @@ class EnvDirs():
         if not os.environ.has_key('DEV_PARENT_DIR'):
             print 'Env. var DEV_PARENT_DIR must exist and point to the parent directory of the library source folders.'
             return ""
-        ddir = os.environ['DEV_PARENT_DIR'] + os.path.sep
+        ddir = os.environ['DEV_PARENT_DIR']
         if not os.path.isdir(ddir):
             print errStr.format(ddir, "DEV_PARENT_DIR", "source")
             ddir = ""
@@ -63,19 +63,21 @@ class EnvDirs():
 
 def makeDirectoryPath( bdir):
     adir = os.path.realpath(bdir)
-    pelems = [x for x in adir.split(os.path.sep) if len(x) > 0]
-    ppath = ""
-    for pi in pelems:
-        ppath += os.path.sep + pi
-        if not os.path.isdir(ppath):
-            os.mkdir(ppath)
+    bdir = adir
+    while not os.path.isdir(adir):
+        adir = os.path.split(adir)[0]
+    # adir is an existing directory
+    pelems = [x for x in bdir.split(adir)[1].split(os.path.sep) if len(x) > 0]
+    for d in pelems:
+        adir = os.path.join(adir, d)
+        os.mkdir(adir)
 
 
 class CMakeBuilder():
     """Platform agnostic building of C++ modules using CMake."""
 
     def __init__(self, cmakeDir, devdir, makeDebug, buildDir):
-        self.__cmakeDir = cmakeDir + os.path.sep
+        self.__cmakeDir = cmakeDir
         self.__mname = devdir.split(os.path.sep)[-1]    # devdir may be a full path or a name
         self.__buildType = 'Debug' if makeDebug else 'Release'
 
@@ -84,9 +86,9 @@ class CMakeBuilder():
         if not os.path.isdir(devdir):
             pdevdir = envdirs.getDevEnv()
             print "Looking for {0} in {1}...".format(devdir,pdevdir)
-            devdir = "{0}{1}{2}".format(pdevdir, os.path.sep, devdir)
+            devdir = os.path.join( pdevdir, devdir)
 
-        self.__DEV_DIR = devdir + os.path.sep
+        self.__DEV_DIR = devdir
         if not os.path.exists(self.__DEV_DIR):
             print "The source directory wasn't found at {0}!".format(self.__DEV_DIR)
             sys.exit(1)
@@ -94,37 +96,36 @@ class CMakeBuilder():
         print "====================== [ Building '{0}' {1} ] =======================".format( self.__mname, self.__buildType)
 
         # Make the cmake directory in the library if not present already.
-        libCMakeDir = "{0}cmake{1}".format( self.__DEV_DIR, os.path.sep)
+        libCMakeDir = os.path.join( self.__DEV_DIR, 'cmake')
         makeDirectoryPath( libCMakeDir)
         self.__copyCMakeFiles()
 
-        self.__BUILD_DIR = buildDir + os.path.sep + self.__buildType.lower()
-        makeDirectoryPath( self.__BUILD_DIR)   # Create the module build directory and build type if not already present
+        self.__BUILD_DIR = os.path.join( buildDir, self.__buildType.lower())
+        makeDirectoryPath( self.__BUILD_DIR)  # Create the module build directory and build type if not already present
 
 
     def makeFindConfig( self):
-        """Create the Find'Library'.cmake."""
+        """Create the Find*L*.cmake file inside library L's dev/cmake directory."""
         # Read in template LibConfig.cmake and replace all instances of XXX with self.__mname.
-        libCMakeDir = "{0}cmake{1}".format( self.__DEV_DIR, os.path.sep)
-        configFile = libCMakeDir + self.__mname + 'Config.cmake'    # Write destination
+        configFile = os.path.join( self.__DEV_DIR, 'cmake', self.__mname + 'Config.cmake')  # Write destination
         fw = open( configFile, 'w')
-        for ln in file( self.__cmakeDir + 'LibConfig.cmake', 'r').readlines():  # Get template lines
+        for ln in file( os.path.join( self.__cmakeDir, 'LibConfig.cmake'), 'r').readlines():  # Get template lines
             fw.write( ln.replace('XXX', self.__mname))  # Replace XXX tokens
         fw.close()
         print ' + Created {0}'.format( configFile)
 
 
     def __copyCMakeFiles( self):
-        # Copy across the other CMake config files
-        libCMakeDir = "{0}cmake{1}".format( self.__DEV_DIR, os.path.sep)
-        shutil.copy( "{0}FindLibs.cmake".format( self.__cmakeDir), libCMakeDir)
-        shutil.copy( "{0}LinkLibs.cmake".format( self.__cmakeDir), libCMakeDir)
-        shutil.copy( "{0}LinkTargets.cmake".format( self.__cmakeDir), libCMakeDir)
-        shutil.copy( "{0}Macros.cmake".format( self.__cmakeDir), libCMakeDir)
-        print ' + Created {0}FindLibs.cmake'.format( libCMakeDir)
-        print ' + Created {0}LinkLibs.cmake'.format( libCMakeDir)
-        print ' + Created {0}LinkTargets.cmake'.format( libCMakeDir)
-        print ' + Created {0}Macros.cmake'.format( libCMakeDir)
+        """Copy across the other CMake config files into the development library cmake directory."""
+        tdir = os.path.join( self.__DEV_DIR, 'cmake')
+        shutil.copy( os.path.join( self.__cmakeDir, 'Macros.cmake'), tdir)
+        shutil.copy( os.path.join( self.__cmakeDir, 'FindLibs.cmake'), tdir)
+        shutil.copy( os.path.join( self.__cmakeDir, 'LinkLibs.cmake'), tdir)
+        shutil.copy( os.path.join( self.__cmakeDir, 'LinkTargets.cmake'), tdir)
+        print ' + Created', os.path.join( tdir,'Macros.cmake')
+        print ' + Created', os.path.join( tdir,'FindLibs.cmake')
+        print ' + Created', os.path.join( tdir,'LinkLibs.cmake')
+        print ' + Created', os.path.join( tdir,'LinkTargets.cmake')
 
 
     def cmake( self):

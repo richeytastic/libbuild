@@ -141,7 +141,8 @@ if(WIN32)
     endif()
 
     if(WITH_ASSIMP)
-        file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc${_msvcv}0-mt${_dsuffix}.dll" DESTINATION "${tdest}")
+        #file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc${_msvcv}0-mt${_dsuffix}.dll" DESTINATION "${tdest}")
+        file( COPY "${ASSIMP_DIR}/../../../bin/assimp-vc${_msvcv}0-mt.dll" DESTINATION "${tdest}")
     endif()
 
     # Note that CPD under Windows compiles to a static library so no DLL to copy over.

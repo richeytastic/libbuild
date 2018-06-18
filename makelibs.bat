@@ -12,10 +12,8 @@ setlocal
 
 set _python="python.exe"
 set _makelibs="%DEV_PARENT_DIR%\libbuild\makelibs.py"
-set _lib=%1
-set _debug=%2
 
-call %_python% %_makelibs% %_lib% %_debug%
+call %_python% %_makelibs% %1 %2 %3
 goto :eof
 
 endlocal

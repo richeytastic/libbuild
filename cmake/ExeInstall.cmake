@@ -147,7 +147,7 @@ if(WIN32)
     endif()
 
     if(WITH_QUAZIP)
-        file( COPY "${QuaZip_LIBRARY_DIR}/quazip5.dll" DESTINATION "${tdest}")
+        file( COPY "${QuaZip_ROOT_DIR}/bin/QuaZip-vc${_msvcv}0.dll" DESTINATION "${tdest}")
         file( COPY "${ZLIB_DLL}" DESTINATION "${tdest}")
     endif()
 

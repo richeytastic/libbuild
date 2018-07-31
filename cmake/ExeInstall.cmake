@@ -154,7 +154,7 @@ if(WIN32)
     # Note that CPD under Windows compiles to a static library so no DLL to copy over.
 
     if(WITH_QT)
-        set(QT_BIN "${Qt5_DIR}/../../../bin")
+        set( QT_BIN "${Qt5_DIR}/../../../bin")
         file( COPY "${QT_BIN}/Qt5Core${_dsuffix}.dll"    DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5GUI${_dsuffix}.dll"     DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5Widgets${_dsuffix}.dll" DESTINATION "${tdest}")
@@ -179,18 +179,8 @@ if(WIN32)
     if( IS_DEBUG)
         set( C_DLL_DIR "${MSVC_REDIST}/Debug_NonRedist/x64/Microsoft.VC140.DebugCRT")
     endif()
-
-    #file( COPY "${C_DLL_DIR}/msvcp140${_dsuffix}.dll" DESTINATION "${tdest}")
-    #file( COPY "${C_DLL_DIR}/vcruntime140${_dsuffix}.dll" DESTINATION "${tdest}")
-    #file( COPY "${C_DLL_DIR}/concrt140${_dsuffix}.dll" DESTINATION "${tdest}")
-    #file( COPY "${C_DLL_DIR}/vccorlib140${_dsuffix}.dll" DESTINATION "${tdest}")
     file( GLOB MSVC_REDIST "${C_DLL_DIR}/*${_dsuffix}.dll")
-    file( COPY ${MSVC_REDIST} DESTINATION "${tdest}")
-
+    file( COPY ${MSVC_REDIST} DESTINATION "${tdest}" FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_WRITE GROUP_READ WORLD_READ)
     file( GLOB UCRT_DLLS "C:/Program Files (x86)/Windows Kits/10/Redist/ucrt/DLLs/x64/*.dll")
-    file( COPY ${UCRT_DLLS} DESTINATION "${tdest}")
-
-    # Older C/C++ runtime also required for Matlab
-    #install( FILES "C:/Windows/System32/msvcp100.dll" DESTINATION ${INSTALL_LIBS_DIR})
-    #install( FILES "C:/Windows/System32/msvcr100.dll" DESTINATION ${INSTALL_LIBS_DIR})
+    file( COPY ${UCRT_DLLS} DESTINATION "${tdest}" FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_WRITE GROUP_READ WORLD_READ)
 endif()

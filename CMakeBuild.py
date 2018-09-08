@@ -198,11 +198,14 @@ class CMakeBuilder():
         if not os.path.exists(libPath):
             return True
 
+        rval = True
         lddout = subprocess32.check_output(['ldd', libPath]).split('\n')
         missinglibs = [ln.strip() for ln in lddout if ln.find('not found') >= 0]
         if len(missinglibs) > 0:
             print " *** LINKING FAILED! ***"
             for ln in missinglibs:
                 print ln
-            return False
+            rval = False
+
+        return rval
 

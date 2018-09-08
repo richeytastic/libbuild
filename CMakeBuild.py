@@ -137,9 +137,10 @@ class CMakeBuilder():
         shcall = ['cmake', '-DCMAKE_BUILD_TYPE={0}'.format( self.__buildType), '-G', generator, self.__DEV_DIR]
         if subprocess32.call( shcall) != 0:
             print "** Error with CMake configuration! **"
-            sys.exit(1)
+            return False
         # Set the project name from the generated CMakeCache.txt
         self.__projectName = self.getCMakeCacheVariable( 'CMAKE_PROJECT_NAME');
+        return True
 
 
     def getCMakeCacheVariable( self, varName):
@@ -181,7 +182,7 @@ class CMakeBuilder():
             return False
         cmd = ['cmake', '--build', '.', '--target', 'install']
         if subprocess32.call(cmd) != 0:
-            print " *** INSTALL FAILED! ***"
+            print " *** BUILD & INSTALL FAILED! ***"
             return False
 
 

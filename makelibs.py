@@ -101,12 +101,15 @@ if __name__ == "__main__":
 
             mb = CMakeBuilder( cmakeDir, libDevDir, makeDebug, libBuildDir)
             mb.makeFindConfig()
-            mb.cmake()
-            builtOK = mb.build()
-            if builtOK and doInstall:
-                if not os.path.exists( libInstallDir):
-                    print "*** WARNING *** : Installation directory '{0}' does not exist - it will be created!".format(libInstallDir)
-                mb.install( libInstallDir)
+            cmakeOK = mb.cmake()
+
+            if cmakeOK:
+                if not doInstall:
+                    mb.build()
+                else:
+                    if not os.path.exists( libInstallDir):
+                        print "*** WARNING *** : Installation directory '{0}' does not exist - it will be created!".format(libInstallDir)
+                    mb.install( libInstallDir)
 
     sys.exit(0)
 

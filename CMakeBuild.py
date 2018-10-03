@@ -100,7 +100,8 @@ class CMakeBuilder():
         makeDirectoryPath( libCMakeDir)
         self.__copyCMakeFiles()
 
-        self.__BUILD_DIR = os.path.join( buildDir, self.__buildType.lower())
+        #self.__BUILD_DIR = os.path.join( buildDir, self.__buildType.lower())
+        self.__BUILD_DIR = os.path.join( buildDir, self.__buildType)
         makeDirectoryPath( self.__BUILD_DIR)  # Create the module build directory and build type if not already present
 
 

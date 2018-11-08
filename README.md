@@ -18,7 +18,7 @@ does this automatically.
 
 ---
 
-The script requires [CMake](https://cmake.org/) (requires version 3.8+ on Windows & Linux),
+The script requires [CMake](https://cmake.org/) (requires version 3.12.2+),
 the [Ninja build system](https://github.com/ninja-build/ninja.git), and Python
 2.7 (Python 3.\* not suppported).
 
@@ -42,12 +42,12 @@ The following environment variables will also be read if set:
     Location of [IDTFConverter](www2.iaas.msu.ru/tmp/u3d/u3d-1.4.5_current.zip)
     (with thanks to Michail Vidiassov)
 
-On Windows, set the following environment variable to the particular Qt5 distribution to
-build against. This is so that conflicting Qt5 libraries (which are sometimes included
-with other programs) aren't found instead:
-- `QT5_CMAKE_PATH`
+Set the QT5 environment variable to the particular Qt5 library to build against.
+This is to avoid conflicts with other Qt runtime libraries which may be on the path.
 
-    Parent directory for Qt5Config.cmake (e.g. "D:/Qt/5.7/msvc2015\_64/lib/cmake/Qt5")
+- `QT5`
+
+    Parent directory for Qt5 library (e.g. "C:/Qt/5.11.2/msvc2015\_64")
 
 This repository also comes with a convenient batch scipt for Windows ("makelibs.bat") but
 this requires environment variable `PYTHON_EXE` to be set to the python.exe you want to use

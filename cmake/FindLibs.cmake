@@ -133,7 +133,7 @@ if(WITH_RMODELIO)
     set(WITH_ASSIMP TRUE)
     set(WITH_LIBLAS FALSE)
     set(WITH_RFEATURES TRUE)
-    message( STATUS "rModelIOS:  ${rModelIO_LIBRARIES}")
+    message( STATUS "rModelIO:   ${rModelIO_LIBRARIES}")
 endif()
 
 # RModelIO::U3DExporter requires IDTFConverter
@@ -299,11 +299,11 @@ if(WITH_VTK)    # VTK
 endif()
 
 if(WITH_QT)     # Qt5
-    set( Qt5_DIR "$ENV{QT5_CMAKE_PATH}" CACHE PATH "Location of Qt5Config.cmake")
+    set( Qt5_DIR "$ENV{QT5}/lib/cmake/Qt5" CACHE PATH "Location of Qt5Config.cmake")
     if(NOT IS_DIRECTORY ${Qt5_DIR})
-        message( FATAL_ERROR "Can't find Qt5! Set environment variable QT5_CMAKE_PATH to the location of Qt5Config.cmake")
+        message( FATAL_ERROR "Can't find Qt5! Set environment variable QT5 to the location of the library!")
     endif()
-    set( QT_INSTALLER_FRAMEWORK "${Qt5_DIR}/../../../../../Tools/QtInstallerFramework/3.0/bin")
+    set( QT_INSTALLER_FRAMEWORK "$ENV{QT5}/../../Tools/QtInstallerFramework/3.0/bin")
     set( QT_INF_BINARY_CREATOR "${QT_INSTALLER_FRAMEWORK}/binarycreator${CMAKE_EXECUTABLE_SUFFIX}")
     set( QT_INF_REPO_GEN "${QT_INSTALLER_FRAMEWORK}/repogen${CMAKE_EXECUTABLE_SUFFIX}")
 

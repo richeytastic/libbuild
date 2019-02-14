@@ -21,8 +21,8 @@
 get_filename_component( XXX_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component( XXX_ROOT_DIR  "${XXX_CMAKE_DIR}"           PATH)
 
-set( XXX_INCLUDE_DIRS "${XXX_ROOT_DIR}/include" CACHE PATH "The XXX include directories.")
-set( XXX_LIBRARY_DIR  "${XXX_ROOT_DIR}/lib"     CACHE PATH "The XXX library directory.")
+set( XXX_INCLUDE_DIRS "${XXX_ROOT_DIR}/../include" CACHE PATH "The XXX include directories.")
+set( XXX_LIBRARY_DIR  "${XXX_ROOT_DIR}"            CACHE PATH "The XXX library directory.")
 
 include( "${CMAKE_CURRENT_LIST_DIR}/Macros.cmake")
 get_library_suffix( _lsuff)

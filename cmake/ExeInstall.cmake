@@ -152,6 +152,10 @@ if(WIN32)
         file( COPY "${ZLIB_DLL}" DESTINATION "${tdest}")
     endif()
 
+    if(WITH_LUA)
+        file( COPY "${LUA_LIBRARY_DIR}/lua53.dll" DESTINATION "${tdest}")
+    endif()
+
     # Note that CPD under Windows compiles to a static library so no DLL to copy over.
 
     if(WITH_QT)

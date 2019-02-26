@@ -164,7 +164,7 @@ if(WIN32)
         file( COPY "${QT_BIN}/Qt5Charts${_dsuffix}.dll"  DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5GUI${_dsuffix}.dll"     DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5Widgets${_dsuffix}.dll" DESTINATION "${tdest}")
-        file( COPY "${QT_BIN}/Qt5SQL${_dsuffix}.dll"     DESTINATION "${tdest}")
+        #file( COPY "${QT_BIN}/Qt5SQL${_dsuffix}.dll"     DESTINATION "${tdest}")
         file( COPY "${QT_BIN}/Qt5Svg${_dsuffix}.dll"     DESTINATION "${tdest}")
         # Ensure that the platform plugin qwindows.dll is installed into the "platforms" folder.
         file( COPY "${QT_BIN}/../plugins/platforms/qwindows${_dsuffix}.dll" DESTINATION "${tdest}/platforms")

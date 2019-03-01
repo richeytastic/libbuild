@@ -41,7 +41,7 @@ def getModules( args):
     ms = []
     for rq in args:
         arg = rq.lower()
-        if libDict.keys().count(arg) > 0:    # Build a specific set of libraries
+        if list(libDict.keys()).count(arg) > 0:    # Build a specific set of libraries
             ms.append(libDict[arg])
         elif arg == "all":
             ms = list(libList)  # Set ms to be the whole set of libraries to build
@@ -55,19 +55,19 @@ def getModules( args):
 if __name__ == "__main__":
     makeDebug, doInstall, ms = getModules( sys.argv[1:])
     if len(ms) == 0:
-        print "Usage: {0} (module | library1 [library2 ...] | all) [debug] [install]".format(sys.argv[0])
-        print "\tThis is a script to help with the building, linking, and installation of the following libraries:"
+        print( "Usage: %s (module | library1 [library2 ...] | all) [debug] [install]" % sys.argv[0])
+        print( "\tThis is a script to help with the building, linking, and installation of the following libraries:")
         libList = getLibraryList()
         for lib in libList:
-            print "\t\t{0}".format(lib)
-        print "\tThe current CMake generator used is 'Ninja'; ensure ninja is on the PATH."
-        print "\tSpecify one of the libraries listed above, or use 'all' to build all available libraries."
-        print "\tBy default, libraries are built in release mode; use 'debug' to build libraries in debug mode instead."
-        print "\tLibraries are not installed by default; use 'install' to copy over files into the installation directory."
-        print "\tThe following environment variables must be defined prior to using this script:"
-        print "\tDEV_PARENT_DIR     : The parent directory of library source directories (e.g. /home/user/dev/lib)"
-        print "\tBUILD_PARENT_DIR   : The parent directory for where building happens (e.g. /home/user/local_builds)"
-        print "\tINSTALL_PARENT_DIR : The parent directory for library installation (e.g. /home/user/local_libs)"
+            print( "\t\t%s" % lib)
+        print( "\tThe current CMake generator used is 'Ninja'; ensure ninja is on the PATH.")
+        print( "\tSpecify one of the libraries listed above, or use 'all' to build all available libraries.")
+        print( "\tBy default, libraries are built in release mode; use 'debug' to build libraries in debug mode instead.")
+        print( "\tLibraries are not installed by default; use 'install' to copy over files into the installation directory.")
+        print( "\tThe following environment variables must be defined prior to using this script:")
+        print( "\tDEV_PARENT_DIR     : The parent directory of library source directories (e.g. /home/user/dev/lib)")
+        print( "\tBUILD_PARENT_DIR   : The parent directory for where building happens (e.g. /home/user/local_builds)")
+        print( "\tINSTALL_PARENT_DIR : The parent directory for library installation (e.g. /home/user/local_libs)")
     else:
         envVars = EnvDirs()
         devDir = envVars.getDevEnv()
@@ -75,15 +75,15 @@ if __name__ == "__main__":
         installDir = envVars.getInstallEnv()
 
         if not os.path.exists(devDir):
-            print "Exiting - parent development directory not defined or doesn't exist. Ensure DEV_PARENT_DIR is a valid path."
+            print( "Exiting - parent development directory not defined or doesn't exist. Ensure DEV_PARENT_DIR is a valid path.")
             sys.exit(-1)
 
         if buildDir == "":
-            print "Exiting - parent build directory not set; ensure environment variable BUILD_PARENT_DIR is set."
+            print( "Exiting - parent build directory not set; ensure environment variable BUILD_PARENT_DIR is set.")
             sys.exit(-2)
 
         if doInstall and installDir == "":
-            print "Exiting - installation not available - a valid parent installation directory was not defined; ensure INSTALL_PARENT_DIR is set."
+            print( "Exiting - installation not available - a valid parent installation directory was not defined; ensure INSTALL_PARENT_DIR is set.")
             sys.exit(-3)
 
         cmakeDir = os.path.dirname(os.path.realpath(sys.argv[0])) + '{0}cmake'.format( os.path.sep) # adjacent cmake directory
@@ -93,11 +93,11 @@ if __name__ == "__main__":
             libInstallDir = installDir + os.path.sep + mname
 
             if not os.path.exists(libDevDir):
-                print "*** ERROR *** : Missing library directory '{0}' - aborting!".format(libDevDir)
+                print( "*** ERROR *** : Missing library directory '{0}' - aborting!".format(libDevDir))
                 sys.exit(-4)
 
             if not os.path.exists(libBuildDir):
-                print "** WARNING *** : Build directory '{0}' does not exist - it will be created!".format(libBuildDir)
+                print( "** WARNING *** : Build directory '{0}' does not exist - it will be created!".format(libBuildDir))
 
             mb = CMakeBuilder( cmakeDir, libDevDir, makeDebug, libBuildDir)
             mb.makeFindConfig()
@@ -108,7 +108,7 @@ if __name__ == "__main__":
                     mb.build()
                 else:
                     if not os.path.exists( libInstallDir):
-                        print "*** WARNING *** : Installation directory '{0}' does not exist - it will be created!".format(libInstallDir)
+                        print( "*** WARNING *** : Installation directory '{0}' does not exist - it will be created!".format(libInstallDir))
                     mb.install( libInstallDir)
 
     sys.exit(0)

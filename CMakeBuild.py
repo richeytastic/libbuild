@@ -123,10 +123,10 @@ class CMakeBuilder():
         shutil.copy( os.path.join( self.__cmakeDir, 'FindLibs.cmake'), tdir)
         shutil.copy( os.path.join( self.__cmakeDir, 'LinkLibs.cmake'), tdir)
         shutil.copy( os.path.join( self.__cmakeDir, 'LinkTargets.cmake'), tdir)
-        print( ' + Created', os.path.join( tdir,'Macros.cmake'))
-        print( ' + Created', os.path.join( tdir,'FindLibs.cmake'))
-        print( ' + Created', os.path.join( tdir,'LinkLibs.cmake'))
-        print( ' + Created', os.path.join( tdir,'LinkTargets.cmake'))
+        print( ' + Created %s' % os.path.join( tdir,'Macros.cmake'))
+        print( ' + Created %s' % os.path.join( tdir,'FindLibs.cmake'))
+        print( ' + Created %s' % os.path.join( tdir,'LinkLibs.cmake'))
+        print( ' + Created %s' % os.path.join( tdir,'LinkTargets.cmake'))
 
 
     def cmake( self):

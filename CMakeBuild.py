@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #************************************************************************
-# * Copyright (C) 2017 Richard Palmer
+# * Copyright (C) 2019 Richard Palmer
 # *
 # * This program is free software: you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
@@ -61,9 +61,11 @@ class EnvDirs():
         return ddir
 
 
-def makeDirectoryPath( bdir):
+def makeDirectoryPath( bdir, warn=True):
     adir = os.path.realpath(bdir)
     bdir = adir
+    if warn and not os.path.exists( bdir):
+        print( "** WARNING ** : Directory '{}' does not exist - it will be created!".format(bdir))
     while not os.path.isdir(adir):
         adir = os.path.split(adir)[0]
     # adir is an existing directory
@@ -73,74 +75,104 @@ def makeDirectoryPath( bdir):
         os.mkdir(adir)
 
 
+def hasFileOnPath( fname):
+    """Returns the full path to the given file iff the file is found on the PATH."""
+    pdirs = os.environ['PATH'].split(os.pathsep)
+    for pdir in pdirs:
+        fpath = os.path.join(pdir, fname)
+        if os.path.exists(fpath):
+            return fpath
+    return ""
+
+
 class CMakeBuilder():
     """Platform agnostic building of C++ modules using CMake."""
 
-    def __init__(self, cmakeDir, devdir, makeDebug, buildDir):
-        self.__cmakeDir = cmakeDir
-        self.__mname = devdir.split(os.path.sep)[-1]    # devdir may be a full path or a name
+    def __init__(self, devdir, makeDebug):
+        self.__mname = devdir.split(os.path.sep)[-1]
         self.__buildType = 'Debug' if makeDebug else 'Release'
 
-        envdirs = EnvDirs()
         # if devdir is a name, it won't exist on the filesystem
         if not os.path.isdir(devdir):
+            envdirs = EnvDirs()
             pdevdir = envdirs.getDevEnv()
             print( "Looking for {0} in {1}...".format(devdir,pdevdir))
             devdir = os.path.join( pdevdir, devdir)
 
         self.__DEV_DIR = devdir
+
+
+    def buildType( self):
+        return self.__buildType
+
+
+    def makeLibraryFindConfig( self, cmakeDir):
         if not os.path.exists(self.__DEV_DIR):
-            print( "The source directory wasn't found at {0}!".format(self.__DEV_DIR))
-            sys.exit(1)
+            print( "Cannot configure library cmake files - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            return False
 
-        print( "====================== [ Building '{0}' {1} ] =======================".format( self.__mname, self.__buildType))
-
+        print( "==================== [ Creating '{0}Config.cmake' ] ======================".format( self.__mname))
         # Make the cmake directory in the library if not present already.
         libCMakeDir = os.path.join( self.__DEV_DIR, 'cmake')
         makeDirectoryPath( libCMakeDir)
-        self.__copyCMakeFiles()
 
-        #self.__BUILD_DIR = os.path.join( buildDir, self.__buildType.lower())
-        self.__BUILD_DIR = os.path.join( buildDir, self.__buildType)
-        makeDirectoryPath( self.__BUILD_DIR)  # Create the module build directory and build type if not already present
+        # Copy across the other CMake config files into the development library cmake directory.
+        tdir = os.path.join( self.__DEV_DIR, 'cmake')
+        shutil.copy( os.path.join( cmakeDir, 'Macros.cmake'), tdir)
+        shutil.copy( os.path.join( cmakeDir, 'FindLibs.cmake'), tdir)
+        shutil.copy( os.path.join( cmakeDir, 'LinkLibs.cmake'), tdir)
+        shutil.copy( os.path.join( cmakeDir, 'LinkTargets.cmake'), tdir)
+        print( ' + Updated {}'.format( os.path.join( tdir,'Macros.cmake')))
+        print( ' + Updated {}'.format( os.path.join( tdir,'FindLibs.cmake')))
+        print( ' + Updated {}'.format( os.path.join( tdir,'LinkLibs.cmake')))
+        print( ' + Updated {}'.format( os.path.join( tdir,'LinkTargets.cmake')))
 
-
-    def makeFindConfig( self):
         """Create the Find*L*.cmake file inside library L's dev/cmake directory."""
-        # Read in template LibConfig.cmake and replace all instances of XXX with self.__mname.
+        # Read in template LibConfig.cmake and replace all instances of <XXX> with self.__mname.
         configFile = os.path.join( self.__DEV_DIR, 'cmake', self.__mname + 'Config.cmake')  # Write destination
         fw = open( configFile, 'w')
-        for ln in open( os.path.join( self.__cmakeDir, 'LibConfig.cmake'), 'r').readlines():  # Get template lines
-            fw.write( ln.replace('XXX', self.__mname))  # Replace XXX tokens
+        for ln in open( os.path.join( cmakeDir, 'LibConfig.cmake'), 'r').readlines():  # Get template lines
+            fw.write( ln.replace('<XXX>', self.__mname))  # Replace <XXX> tokens
         fw.close()
-        print( ' + Created {0}'.format( configFile))
+        print( ' + Updated {0}'.format( configFile))
+        return True
 
 
-    def __copyCMakeFiles( self):
-        """Copy across the other CMake config files into the development library cmake directory."""
-        tdir = os.path.join( self.__DEV_DIR, 'cmake')
-        shutil.copy( os.path.join( self.__cmakeDir, 'Macros.cmake'), tdir)
-        shutil.copy( os.path.join( self.__cmakeDir, 'FindLibs.cmake'), tdir)
-        shutil.copy( os.path.join( self.__cmakeDir, 'LinkLibs.cmake'), tdir)
-        shutil.copy( os.path.join( self.__cmakeDir, 'LinkTargets.cmake'), tdir)
-        print( ' + Created %s' % os.path.join( tdir,'Macros.cmake'))
-        print( ' + Created %s' % os.path.join( tdir,'FindLibs.cmake'))
-        print( ' + Created %s' % os.path.join( tdir,'LinkLibs.cmake'))
-        print( ' + Created %s' % os.path.join( tdir,'LinkTargets.cmake'))
+    def cmake( self, buildDir, installDir):
+        if not os.path.exists(self.__DEV_DIR):
+            print( "Cannot configure - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            return False
 
+        print( "==================== [ Configuring '{0}' {1} ] ======================".format( self.__mname, self.__buildType))
+        self.__BUILD_DIR = buildDir
 
-    def cmake( self):
+        makeDirectoryPath( self.__BUILD_DIR)  # Create the module build directory and build type if not already present
+        makeDirectoryPath( installDir) # Create the install directory if not already present
+
         #generator = 'NMake Makefiles JOM'   # Use JOM for multi-threaded builds
         #if sys.platform.startswith('linux'):
         #    generator = 'Unix Makefiles'
         os.chdir( self.__BUILD_DIR)
         generator = 'Ninja' # Use Ninja for Windows and Linux
-        shcall = ['cmake', '-DCMAKE_BUILD_TYPE={0}'.format( self.__buildType), '-G', generator, self.__DEV_DIR]
-        if subprocess32.call( shcall) != 0:
+        cmd = ['cmake',
+               '-G', generator,
+               '-DCMAKE_BUILD_TYPE={0}'.format( self.__buildType),
+               '-DCMAKE_INSTALL_PREFIX={0}'.format( installDir),
+               self.__DEV_DIR]
+
+        print( ' '.join(cmd))
+        if subprocess32.call( cmd) != 0:
             print( "** Error with CMake configuration! **")
             return False
+
         # Set the project name from the generated CMakeCache.txt
         self.__projectName = self.getCMakeCacheVariable( 'CMAKE_PROJECT_NAME');
+        # Copy across the database of compilation commands if it exists to the development
+        # directory so that VIM's YouCompleteMe plugin can use the clangd lexical parser properly.
+        if os.path.exists( 'compile_commands.json'):
+            shutil.copy( 'compile_commands.json', self.__DEV_DIR)
+
+        print( "-- Finished configuring '{}' {} --".format(self.__mname, self.__buildType))
         return True
 
 
@@ -166,25 +198,37 @@ class CMakeBuilder():
 
 
     def build( self):
+        if not os.path.exists(self.__DEV_DIR):
+            print( "Cannot build - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            return False
+
+        print( "====================== [ Building '{0}' {1} ] =======================".format( self.__mname, self.__buildType))
         os.chdir( self.__BUILD_DIR)
-        cmd = ['cmake', '--build', '.', '--']
+        cmd = ['cmake', '--build', '.']
+        print( ' '.join(cmd))
         if subprocess32.call(cmd) != 0:
             print( " *** BUILD FAILED! ***")
             return False
-        return self.__checkLinkage()
+        linkOk = self.__checkLinkage()
+        if linkOk:
+            print( "-- Finished building '{}' {} --".format(self.__mname, self.__buildType))
+        return linkOk
 
 
-    def install( self, installDir):
-        makeDirectoryPath( installDir) # Create the install directory if not already present
+    def install( self):
+        if not os.path.exists(self.__DEV_DIR):
+            print( "Cannot install - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            return False
+
+        print( "===================== [ Installing '{0}' {1} ] ======================".format( self.__mname, self.__buildType))
         os.chdir( self.__BUILD_DIR)
-        cmd = ['cmake', '-DCMAKE_INSTALL_PREFIX={0}'.format( installDir), self.__DEV_DIR]
-        if subprocess32.call(cmd) != 0:
-            print( " *** CMAKE RUN FAILED! ***")
-            return False
         cmd = ['cmake', '--build', '.', '--target', 'install']
+        print( ' '.join(cmd))
         if subprocess32.call(cmd) != 0:
-            print( " *** BUILD & INSTALL FAILED! ***")
+            print( " *** INSTALL FAILED! ***")
             return False
+        print( "-- Finished installing '{}' {} --".format(self.__mname, self.__buildType))
+        return True
 
 
     def __checkLinkage( self):
@@ -201,7 +245,7 @@ class CMakeBuilder():
             return True
 
         rval = True
-        lddout = subprocess32.check_output(['ldd', libPath]).split('\n')
+        lddout = subprocess32.check_output(['ldd', libPath], universal_newlines=True).split('\n')
         missinglibs = [ln.strip() for ln in lddout if ln.find('not found') >= 0]
         if len(missinglibs) > 0:
             print( " *** LINKING FAILED! ***")

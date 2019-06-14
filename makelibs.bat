@@ -1,19 +1,11 @@
-
 @echo off
-
-:check_dev
-if not "%DEV_PARENT_DIR%" == "" goto :exec
-echo The DEV_PARENT_DIR environment variable is not set!
-goto :eof
-
-:exec
 
 setlocal
 
 set _python="python.exe"
-set _makelibs="%DEV_PARENT_DIR%\libbuild\makelibs.py"
+set _makelibs="%~dp0%makelibs.py"
 
-call %_python% %_makelibs% %1 %2 %3
+call %_python% %_makelibs% %1 %2 %3 %4 %5 %6 %7 %8
 goto :eof
 
 endlocal

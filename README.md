@@ -24,15 +24,15 @@ version 1.8.2), and Python 3.6 or higher.
 Before running `makelibs.py`, ensure the following environment variables are set:
 - `DEV_PARENT_DIR`
 
-    Parent directory for the library source directories e.g. '~/dev/libs'
+    Parent directory for the library source directories e.g. `~/dev/libs`
 
 - `BUILD_PARENT_DIR`
 
-    Parent directory for out of source builds of the libraries e.g. '~/local_builds'
+    Parent directory for out of source builds of the libraries e.g. `~/local_builds`
 
 - `INSTALL_PARENT_DIR`
 
-    Parent directory for where the libraries will be installed e.g. '~/local_libs'
+    Parent directory for where the libraries will be installed e.g. `~/local_libs`
 
 The following environment variables will also be read if set:
 
@@ -46,10 +46,10 @@ This is to avoid conflicts with other Qt runtime libraries which may be on the p
 
 - `QT5`
 
-    Parent directory for Qt5 library (e.g. 'C:/Qt/5.12.3/msvc2015\_64')
+    Parent directory for Qt5 library (e.g. `C:/Qt/5.12.3/msvc2015_64`)
 
-This repository also comes with a convenient batch scipt for Windows ("makelibs.bat") but this
-requires 'python.exe' to be on the PATH.
+This repository also comes with a convenient batch scipt for Windows (`makelibs.bat`) but this
+requires `python.exe` to be on the PATH.
 
 The `makelibs.py` script will create subdirectories inside the build and installation
 parent directories, with names corresponding to the selected libraries.
@@ -58,7 +58,7 @@ and cmake configuration scripts will be generated. In general, the installation
 directory will receive copies of only these files, with the originals cached in
 the corresponding build directory.
 
-Run 'makelibs.py' without switches to see its help output:
+Run `makelibs.py` without switches to see its help output:
 
 ```
 Usage: /home/rich/bin/makelibs.py (library1 [library2 ...] | all) ([debug] [install]) | [clean]

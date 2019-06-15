@@ -150,7 +150,10 @@ if __name__ == "__main__":
         libBuildDir = os.path.join( os.path.join( buildDir, mname), mb.buildType())
         libInstallDir = os.path.join( installDir, mname)
         if mb.cmake( libBuildDir, libInstallDir):
-            if mb.build() and doInstall:
+            buildOk = mb.build()
+            if not buildOk:
+                break
+            if doInstall:
                 mb.install()
 
     sys.exit(0)

@@ -19,7 +19,7 @@ does this automatically when passing the 'all' switch.
 
 The script requires [CMake](https://cmake.org/) (requires version 3.12.2+),
 the [Ninja build system](https://github.com/ninja-build/ninja.git) (tested with
-version 1.8.2), and Python 3.6 or higher.
+version 1.8.2), and Python 3.6+.
 
 Before running `makelibs.py`, ensure the following environment variables are set:
 - `DEV_PARENT_DIR`

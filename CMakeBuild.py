@@ -145,9 +145,9 @@ class CMakeBuilder():
 
         print( "==================== [ Configuring '{0}' {1} ] ======================".format( self.__mname, self.__buildType))
         self.__BUILD_DIR = buildDir
+        self.__INSTALL_DIR = installDir
 
-        makeDirectoryPath( self.__BUILD_DIR)  # Create the module build directory and build type if not already present
-        makeDirectoryPath( installDir) # Create the install directory if not already present
+        makeDirectoryPath( self.__BUILD_DIR)    # Create the module build directory and build type if not already present
 
         #generator = 'NMake Makefiles JOM'   # Use JOM for multi-threaded builds
         #if sys.platform.startswith('linux'):
@@ -157,7 +157,7 @@ class CMakeBuilder():
         cmd = ['cmake',
                '-G', generator,
                '-DCMAKE_BUILD_TYPE={0}'.format( self.__buildType),
-               '-DCMAKE_INSTALL_PREFIX={0}'.format( installDir),
+               '-DCMAKE_INSTALL_PREFIX={0}'.format( self.__INSTALL_DIR),
                self.__DEV_DIR]
 
         print( ' '.join(cmd))
@@ -221,6 +221,8 @@ class CMakeBuilder():
             return False
 
         print( "===================== [ Installing '{0}' {1} ] ======================".format( self.__mname, self.__buildType))
+        makeDirectoryPath( self.__INSTALL_DIR)  # Create the install directory if not already present
+
         os.chdir( self.__BUILD_DIR)
         cmd = ['cmake', '--build', '.', '--target', 'install']
         print( ' '.join(cmd))

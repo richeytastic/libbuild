@@ -29,3 +29,5 @@
 
 # VIM backup files
 *~
+
+__pycache__/

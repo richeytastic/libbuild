@@ -57,7 +57,8 @@ if(WIN32)
         if(IS_DEBUG)
             set( ocvs "${_ocv}d.dll")
         endif()
-        file( COPY "${OpenCV_BIN}/opencv_world${ocvs}"      DESTINATION "${tdest}")
+        file( COPY "${OpenCV_BIN}/opencv_world${ocvs}"              DESTINATION "${tdest}")
+        file( COPY "${OpenCV_BIN}/opencv_surface_matching${ocvs}"   DESTINATION "${tdest}")
 
         # Copy in TBB DLL - OpenCV apparently doesn't reference it directly anywhere in its CMake
         # configuration files! Not really sure how it's managing to link it in, but it is

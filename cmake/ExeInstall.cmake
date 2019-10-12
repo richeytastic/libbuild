@@ -58,7 +58,7 @@ if(WIN32)
             set( ocvs "${_ocv}d.dll")
         endif()
         file( COPY "${OpenCV_BIN}/opencv_world${ocvs}"              DESTINATION "${tdest}")
-        file( COPY "${OpenCV_BIN}/opencv_surface_matching${ocvs}"   DESTINATION "${tdest}")
+        #file( COPY "${OpenCV_BIN}/opencv_surface_matching${ocvs}"   DESTINATION "${tdest}")
 
         # Copy in TBB DLL - OpenCV apparently doesn't reference it directly anywhere in its CMake
         # configuration files! Not really sure how it's managing to link it in, but it is
@@ -69,6 +69,12 @@ if(WIN32)
         #else()
         #    file( COPY "${TBBbin}/tbb.dll" DESTINATION "${tdest}")
         #endif()
+
+        file( COPY "${LIB_PRE_REQS}/OpenBLAS-0.3.6-x64/bin/libopenblas.dll" DESTINATION "${tdest}")
+        file( COPY "${LIB_PRE_REQS}/OpenBLAS-0.3.6-x64/bin/libgcc_s_seh-1.dll" DESTINATION "${tdest}")
+        file( COPY "${LIB_PRE_REQS}/OpenBLAS-0.3.6-x64/bin/libgfortran-3.dll" DESTINATION "${tdest}")
+        file( COPY "${LIB_PRE_REQS}/OpenBLAS-0.3.6-x64/bin/libquadmath-0.dll" DESTINATION "${tdest}")
+        file( COPY "${LIB_PRE_REQS}/OpenBLAS-0.3.6-x64/bin/libwinpthread-1.dll" DESTINATION "${tdest}")
     endif()
 
     if(WITH_VTK)

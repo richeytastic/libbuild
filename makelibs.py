@@ -26,7 +26,7 @@ import os
 
 
 def getLibraryList():
-    libList = ['rlib', 'rFeatures', 'rModelIO', 'rVTK', 'QTools', 'FaceTools']  # Build these
+    libList = ['rlib', 'rimg', 'r3d', 'r3dio', 'r3dvis', 'rNonRigid', 'QTools', 'FaceTools']  # Build these
     return libList
 
 

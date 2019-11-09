@@ -3,9 +3,11 @@
 Provides a script (`makelibs.py`) that wraps CMake to configure,
 build, and install the following software on both Linux and Windows:
 - [rlib](../../../rlib)
-- [rFeatures](../../../rFeatures)
-- [rModelIO](../../../rModelIO)
-- [rVTK](../../../rVTK)
+- [rimg](../../../rimg)
+- [r3d](../../../r3d)
+- [r3dio](../../../r3dio)
+- [r3dvis](../../../r3dvis)
+- [rNonRigid](../../../rNonRigid)
 - [QTools](../../../QTools)
 - [FaceTools](https://github.com/frontiersi/facetools)
 
@@ -65,9 +67,11 @@ Usage: /home/rich/bin/makelibs.py (library1 [library2 ...] | all) ([debug] [inst
 
  This script uses CMake to configure and generate scripts for the Ninja build system for the following libraries:
  - rlib
- - rFeatures
- - rModelIO
- - rVTK
+ - rimg
+ - r3d
+ - r3dio
+ - r3dvis
+ - rNonRigid
  - QTools
  - FaceTools
 

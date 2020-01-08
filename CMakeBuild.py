@@ -34,7 +34,7 @@ class EnvDirs():
             return ""
         idir = os.environ['INSTALL_PARENT_DIR']
         if not os.path.isdir(idir):
-            print( errStr.format(idir, "INSTALL_PARENT_DIR", "install"))
+            print( self.__errStr.format(idir, "INSTALL_PARENT_DIR", "install"))
             idir = ""
         return idir
 
@@ -45,7 +45,7 @@ class EnvDirs():
             return ""
         bdir = os.environ['BUILD_PARENT_DIR']
         if not os.path.isdir(bdir):
-            print( errStr.format(bdir, "BUILD_PARENT_DIR", "build"))
+            print( self.__errStr.format(bdir, "BUILD_PARENT_DIR", "build"))
             bdir = ""
         return bdir
 
@@ -56,7 +56,7 @@ class EnvDirs():
             return ""
         ddir = os.environ['DEV_PARENT_DIR']
         if not os.path.isdir(ddir):
-            print( errStr.format(ddir, "DEV_PARENT_DIR", "source"))
+            print( self.__errStr.format(ddir, "DEV_PARENT_DIR", "source"))
             ddir = ""
         return ddir
 
@@ -65,7 +65,7 @@ def makeDirectoryPath( bdir, warn=True):
     adir = os.path.realpath(bdir)
     bdir = adir
     if warn and not os.path.exists( bdir):
-        print( "** WARNING ** : Directory '{}' does not exist - it will be created!".format(bdir))
+        print( f"** WARNING ** : Directory '{bdir}' does not exist - it will be created!")
     while not os.path.isdir(adir):
         adir = os.path.split(adir)[0]
     # adir is an existing directory
@@ -96,7 +96,7 @@ class CMakeBuilder():
         if not os.path.isdir(devdir):
             envdirs = EnvDirs()
             pdevdir = envdirs.getDevEnv()
-            print( "Looking for {0} in {1}...".format(devdir,pdevdir))
+            print( f"Looking for {devdir} in {pdevdir}...")
             devdir = os.path.join( pdevdir, devdir)
 
         self.__DEV_DIR = devdir
@@ -108,10 +108,10 @@ class CMakeBuilder():
 
     def makeLibraryFindConfig( self, cmakeDir):
         if not os.path.exists(self.__DEV_DIR):
-            print( "Cannot configure library cmake files - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            print( f"Cannot configure library cmake files - the source directory wasn't found at {self.__DEV_DIR}!")
             return False
 
-        print( "==================== [ Creating '{0}Config.cmake' ] ======================".format( self.__mname))
+        print( f"~~~~~~~~~~~~~~~~~~~~| Creating '{self.__mname}Config.cmake' |~~~~~~~~~~~~~~~~~~~~~")
         # Make the cmake directory in the library if not present already.
         libCMakeDir = os.path.join( self.__DEV_DIR, 'cmake')
         makeDirectoryPath( libCMakeDir)
@@ -122,10 +122,10 @@ class CMakeBuilder():
         shutil.copy( os.path.join( cmakeDir, 'FindLibs.cmake'), tdir)
         shutil.copy( os.path.join( cmakeDir, 'LinkLibs.cmake'), tdir)
         shutil.copy( os.path.join( cmakeDir, 'LinkTargets.cmake'), tdir)
-        print( ' + Updated {}'.format( os.path.join( tdir,'Macros.cmake')))
-        print( ' + Updated {}'.format( os.path.join( tdir,'FindLibs.cmake')))
-        print( ' + Updated {}'.format( os.path.join( tdir,'LinkLibs.cmake')))
-        print( ' + Updated {}'.format( os.path.join( tdir,'LinkTargets.cmake')))
+        print( f" + Updated {os.path.join( tdir,'Macros.cmake')}")
+        print( f" + Updated {os.path.join( tdir,'FindLibs.cmake')}")
+        print( f" + Updated {os.path.join( tdir,'LinkLibs.cmake')}")
+        print( f" + Updated {os.path.join( tdir,'LinkTargets.cmake')}")
 
         """Create the Find*L*.cmake file inside library L's dev/cmake directory."""
         # Read in template LibConfig.cmake and replace all instances of <XXX> with self.__mname.
@@ -134,16 +134,16 @@ class CMakeBuilder():
         for ln in open( os.path.join( cmakeDir, 'LibConfig.cmake'), 'r').readlines():  # Get template lines
             fw.write( ln.replace('<XXX>', self.__mname))  # Replace <XXX> tokens
         fw.close()
-        print( ' + Updated {0}'.format( configFile))
+        print( f' + Updated {configFile}')
         return True
 
 
     def cmake( self, buildDir, installDir):
-        if not os.path.exists(self.__DEV_DIR):
-            print( "Cannot configure - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+        if not os.path.exists( self.__DEV_DIR):
+            print( f"Cannot configure - the source directory wasn't found at {self.__DEV_DIR}!")
             return False
 
-        print( "==================== [ Configuring '{0}' {1} ] ======================".format( self.__mname, self.__buildType))
+        print( f"~~~~~~~~~~~~~~~~~~~~| Configuring '{self.__mname}' {self.__buildType} |~~~~~~~~~~~~~~~~~~~~~~")
         self.__BUILD_DIR = buildDir
         self.__INSTALL_DIR = installDir
 
@@ -156,8 +156,8 @@ class CMakeBuilder():
         generator = 'Ninja' # Use Ninja for Windows and Linux
         cmd = ['cmake',
                '-G', generator,
-               '-DCMAKE_BUILD_TYPE={0}'.format( self.__buildType),
-               '-DCMAKE_INSTALL_PREFIX={0}'.format( self.__INSTALL_DIR),
+               f'-DCMAKE_BUILD_TYPE={self.__buildType}',
+               f'-DCMAKE_INSTALL_PREFIX={self.__INSTALL_DIR}',
                self.__DEV_DIR]
 
         print( ' '.join(cmd))
@@ -167,12 +167,8 @@ class CMakeBuilder():
 
         # Set the project name from the generated CMakeCache.txt
         self.__projectName = self.getCMakeCacheVariable( 'CMAKE_PROJECT_NAME');
-        # Copy across the database of compilation commands if it exists to the development
-        # directory so that VIM's YouCompleteMe plugin can use the clangd lexical parser properly.
-        if os.path.exists( 'compile_commands.json'):
-            shutil.copy( 'compile_commands.json', self.__DEV_DIR)
 
-        print( "-- Finished configuring '{}' {} --".format(self.__mname, self.__buildType))
+        print( f"~~~| Finished configuring '{self.__mname}' {self.__buildType} |~~~")
         return True
 
 
@@ -199,10 +195,10 @@ class CMakeBuilder():
 
     def build( self):
         if not os.path.exists(self.__DEV_DIR):
-            print( "Cannot build - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            print( f"Cannot build - the source directory wasn't found at {self.__DEV_DIR}!")
             return False
 
-        print( "====================== [ Building '{0}' {1} ] =======================".format( self.__mname, self.__buildType))
+        print( f"~~~~~~~~~~~~~~~~~~~~~~| Building '{self.__mname}' {self.__buildType} |~~~~~~~~~~~~~~~~~~~~~~~")
         os.chdir( self.__BUILD_DIR)
         cmd = ['cmake', '--build', '.']
         print( ' '.join(cmd))
@@ -211,16 +207,16 @@ class CMakeBuilder():
             return False
         linkOk = self.__checkLinkage()
         if linkOk:
-            print( "-- Finished building '{}' {} --".format(self.__mname, self.__buildType))
+            print( f"~~~| Finished building '{self.__mname}' {self.__buildType} |~~~")
         return linkOk
 
 
     def install( self):
         if not os.path.exists(self.__DEV_DIR):
-            print( "Cannot install - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
+            print( f"Cannot install - the source directory wasn't found at {self.__DEV_DIR}!")
             return False
 
-        print( "===================== [ Installing '{0}' {1} ] ======================".format( self.__mname, self.__buildType))
+        print( f"~~~~~~~~~~~~~~~~~~~~~| Installing '{self.__mname}' {self.__buildType} |~~~~~~~~~~~~~~~~~~~~~~")
         makeDirectoryPath( self.__INSTALL_DIR)  # Create the install directory if not already present
 
         os.chdir( self.__BUILD_DIR)
@@ -229,7 +225,7 @@ class CMakeBuilder():
         if subprocess32.call(cmd) != 0:
             print( " *** INSTALL FAILED! ***")
             return False
-        print( "-- Finished installing '{}' {} --".format(self.__mname, self.__buildType))
+        print( f"~~~| Finished installing '{self.__mname}' {self.__buildType} |~~~")
         return True
 
 
@@ -241,7 +237,7 @@ class CMakeBuilder():
             return True
 
         debugSuffix = 'd' if self.__buildType == 'Debug' else ''
-        libPath = "lib{0}{1}.so".format( self.__projectName, debugSuffix)
+        libPath = f"lib{self.__projectName}{debugSuffix}.so"
         # Check if the shared lib exists with standard naming convension.
         if not os.path.exists(libPath):
             return True

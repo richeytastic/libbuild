@@ -25,9 +25,6 @@ if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug")
 endif()
 set( CMAKE_DEBUG_POSTFIX ${_dsuffix})
 
-# For Valloric YouCompleteMe (VIM plugin) for clangd-completer
-set( CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 
 macro( get_msvc_version _ver)
     set( ${_ver} "")
@@ -438,9 +435,9 @@ if(WITH_BOOST)  # Boost
     add_definitions( -DBOOST_ALL_DYN_LINK)  # Force dynamic linking (probably don't need this)
     add_definitions( -DBOOST_SYSTEM_NO_DEPRECATED)
 
-    find_package( Boost 1.68 REQUIRED COMPONENTS regex random thread filesystem system)
+    find_package( Boost 1.68 REQUIRED COMPONENTS regex random thread filesystem system program_options)
     include_directories( ${Boost_INCLUDE_DIRS})
-    set( Boost_LIBRARIES Boost::regex Boost::random Boost::thread Boost::filesystem Boost::system)
+    set( Boost_LIBRARIES Boost::regex Boost::random Boost::thread Boost::filesystem Boost::system Boost::program_options)
 
     #message( STATUS "Boost_VERSION: ${Boost_VERSION}")
     #message( STATUS "Boost_LIB_VERSION: ${Boost_LIB_VERSION}")

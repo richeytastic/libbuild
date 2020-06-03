@@ -78,7 +78,7 @@ if __name__ == "__main__":
     hasninja = len(ninjapath) > 0
 
     if len(ms) == 0:
-        print( "Usage: {} (library1 [library2 ...] | all) ([debug] [install]) | [clean]".format( sys.argv[0]))
+        print( "Usage: {0} (library1 [library2 ...] | all) ([debug] [install]) | [clean]".format(sys.argv[0]))
         print()
         print( " This script uses CMake to configure and generate scripts for the Ninja build system for the following libraries:")
         libList = getLibraryList()
@@ -97,11 +97,11 @@ if __name__ == "__main__":
         print( " INSTALL_PARENT_DIR : The parent directory for library installation (e.g. ~/local_libs)")
         print()
         if hascmake:
-            print( " {0} found at {1}".format( "cmake", cmakepath))
+            print( " CMake found at {0}".format(cmakepath))
         else:
             print( " cmake was not found on PATH!")
         if hasninja:
-            print( " {0} found at {1}".format( "ninja", ninjapath))
+            print( " ninja found at {0}".format(ninjapath))
         else:
             print( " ninja was not found on PATH!")
         sys.exit(0)

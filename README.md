@@ -48,7 +48,7 @@ This is to avoid conflicts with other Qt runtime libraries which may be on the p
 
 - `QT5`
 
-    Parent directory for Qt5 library (e.g. `C:/Qt/5.12.3/msvc2015_64`)
+    Parent directory for Qt5 library (e.g. `C:/Qt/5.15.0/msvc2019_64`)
 
 This repository also comes with a convenient batch scipt for Windows (`makelibs.bat`) but this
 requires `python.exe` to be on the PATH.

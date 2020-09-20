@@ -58,7 +58,6 @@ if(WITH_FACETOOLS)
     set(WITH_R3DIO TRUE)
     set(WITH_QTOOLS TRUE)
     set(WITH_RNONRIGID TRUE)
-    set(WITH_QUAZIP TRUE)
     set(WITH_LUA TRUE)
     message( STATUS "FaceTools:  ${FaceTools_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${FaceTools_LIBRARY_DIR})
@@ -71,7 +70,9 @@ if(WITH_QTOOLS)
     include_directories( ${QTools_INCLUDE_DIRS})
     link_directories( ${QTools_LIBRARY_DIR})
     set(WITH_QT TRUE)
+    set(WITH_RLIB TRUE)
     set(WITH_R3DVIS TRUE)
+    set(WITH_QUAZIP TRUE)
     message( STATUS "QTools:     ${QTools_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${QTools_LIBRARY_DIR})
 endif()
@@ -343,14 +344,14 @@ if(WITH_QT)     # Qt5
     set( QT_INF_BINARY_CREATOR "${QT_INSTALLER_FRAMEWORK}/binarycreator${CMAKE_EXECUTABLE_SUFFIX}")
     set( QT_INF_REPO_GEN "${QT_INSTALLER_FRAMEWORK}/repogen${CMAKE_EXECUTABLE_SUFFIX}")
 
-    find_package( Qt5 CONFIG REQUIRED Core Widgets Charts Sql Svg)
+    find_package( Qt5 CONFIG REQUIRED Core Widgets Charts Network Sql Svg)
     include_directories( ${Qt5Core_INCLUDE_DIRS})
     include_directories( ${Qt5Widgets_INCLUDE_DIRS})
     include_directories( ${Qt5Charts_INCLUDE_DIRS})
+    include_directories( ${Qt5Network_INCLUDE_DIRS})
     include_directories( ${Qt5Sql_INCLUDE_DIRS})
     include_directories( ${Qt5Svg_INCLUDE_DIRS})
-
-    set( QT_LIBRARIES Qt5::Core Qt5::Widgets Qt5::Charts Qt5::Sql Qt5::Svg)
+    set( QT_LIBRARIES Qt5::Core Qt5::Widgets Qt5::Charts Qt5::Network Qt5::Sql Qt5::Svg)
 
     set( QT_LIB_DIR "${Qt5_DIR}/../..")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${QT_LIB_DIR})
@@ -387,7 +388,7 @@ if(WITH_BOOST)  # Boost
         add_definitions( ${Boost_LIB_DIAGNOSTIC_DEFINITIONS})   # Info about Boost's auto linking
     endif()
 
-    set( Boost_NO_SYSTEM_PATHS TRUE)  # Don't search for Boost in system directories
+    set( Boost_NO_SYSTEM_PATHS ON)  # Don't search for Boost in system directories
     set( Boost_USE_STATIC_LIBS OFF CACHE BOOL "use static Boost libraries")
     set( Boost_USE_MULTITHREADED ON)
     set( Boost_USE_STATIC_RUNTIME OFF)

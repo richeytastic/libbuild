@@ -192,7 +192,7 @@ if(WIN32)
         file( COPY "${QT_BIN}/../plugins/imageformats/qsvg${_dsuffix}.dll" DESTINATION "${tdest}/imageformats")
         file( COPY "${QT_BIN}/../plugins/imageformats/qico${_dsuffix}.dll" DESTINATION "${tdest}/imageformats")
 
-        set( _openssl "${Qt5_DIR}/../../../../../Tools/OpenSSL/Win_x64/bin")
+        set( _openssl "$ENV{programfiles}/OpenSSL-Win64/bin")
         file( COPY "${_openssl}/libcrypto-1_1-x64.dll" DESTINATION "${tdest}")
         file( COPY "${_openssl}/libssl-1_1-x64.dll" DESTINATION "${tdest}")
     endif()

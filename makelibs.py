@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #************************************************************************
-# * Copyright (C) 2019 Richard Palmer
+# * Copyright (C) 2020 Richard Palmer
 # *
 # * This program is free software: you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
@@ -140,6 +140,7 @@ if __name__ == "__main__":
     cmakeDir = os.path.dirname(os.path.realpath(sys.argv[0])) + '{0}cmake'.format( os.path.sep) # adjacent cmake directory
     for mname in ms:
         libDevDir = os.path.join( devDir, mname)
+
         if not os.path.exists(libDevDir):
             print( "*** ERROR *** : Missing library directory '{0}' - aborting!".format(libDevDir))
             sys.exit(-6)
@@ -149,6 +150,7 @@ if __name__ == "__main__":
 
         libBuildDir = os.path.join( os.path.join( buildDir, mname), mb.buildType())
         libInstallDir = os.path.join( installDir, mname)
+
         if mb.cmake( libBuildDir, libInstallDir):
             buildOk = mb.build()
             if not buildOk:

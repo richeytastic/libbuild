@@ -12,6 +12,7 @@
 # This module defines the following variables:
 #   - <XXX>_FOUND         : True if <XXX> is found.
 #   - <XXX>_ROOT_DIR      : The root directory where <XXX> is installed.
+#   - <XXX>_BIN_DIR       : The <XXX> bin directory.
 #   - <XXX>_INCLUDE_DIRS  : The <XXX> include directories.
 #   - <XXX>_LIBRARY_DIR   : The <XXX> library directory.
 #   - <XXX>_LIBRARIES     : The <XXX> imported libraries to link to.
@@ -22,6 +23,7 @@ get_filename_component( <XXX>_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component( <XXX>_ROOT_DIR  "${<XXX>_CMAKE_DIR}"           PATH)
 
 set( <XXX>_INCLUDE_DIRS "${<XXX>_ROOT_DIR}/../include" CACHE PATH "The <XXX> include directories.")
+set( <XXX>_BIN_DIR      "${<XXX>_ROOT_DIR}/../bin"     CACHE PATH "The <XXX> bin directory.")
 set( <XXX>_LIBRARY_DIR  "${<XXX>_ROOT_DIR}"            CACHE PATH "The <XXX> library directory.")
 
 include( "${CMAKE_CURRENT_LIST_DIR}/Macros.cmake")

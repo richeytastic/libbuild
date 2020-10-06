@@ -73,8 +73,28 @@ if(WITH_QTOOLS)
     set(WITH_RLIB TRUE)
     set(WITH_R3DVIS TRUE)
     set(WITH_QUAZIP TRUE)
+
     message( STATUS "QTools:            ${QTools_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${QTools_LIBRARY_DIR})
+
+    set( AppImageToolName "appimagetool-x86_64.AppImage")
+    set( AppImageToolPath "${QTools_BIN_DIR}/${AppImageToolName}")
+    if ( UNIX)
+        if (NOT EXISTS "${AppImageToolPath}")
+            message( FATAL_ERROR "Can't find ${AppImageToolName}!")
+        endif()
+        message( STATUS "appimagetool:      ${AppImageToolPath}")
+    endif()
+
+    set( rmvToolName "rmv")
+    if (WIN32)
+        set( rmvToolName "${rmvToolName}.exe")
+    endif()
+    set( rmvToolPath "${QTools_BIN_DIR}/${rmvToolName}")
+    if ( NOT EXISTS "${rmvToolPath}")
+        message( FATAL_ERROR "Can't find ${rmvToolName}!")
+    endif()
+    message( STATUS "rmv:               ${rmvToolPath}")
 endif()
 
 
@@ -233,9 +253,11 @@ if(WITH_ASSIMP)     # AssImp
     find_package( ASSIMP REQUIRED)
     include_directories( ${ASSIMP_INCLUDE_DIRS})
     link_directories( ${ASSIMP_LIBRARY_DIRS})
-    #if (WIN32)
-    #    set(WITH_ZLIB TRUE)
-    #endif()
+    #[[
+    if (WIN32)
+        set(WITH_ZLIB TRUE)
+    endif()
+    #]]
     message( STATUS "AssImp:            ${ASSIMP_LIBRARY_DIRS}/${ASSIMP_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${ASSIMP_LIBRARY_DIRS})
 endif()
@@ -305,11 +327,14 @@ if(WITH_DLIB)   # dlib
 endif()
 
 
-#if(WITH_LIBLAS)     # libLAS
-#    set( LibLAS_DIR "${LIB_PRE_REQS}/libLAS-1.7.0" CACHE PATH "Location of LibLASConfig.cmake")
-#    find_package( LibLAS REQUIRED)
-#    include_directories( ${LibLAS_INCLUDE_DIR})
-#endif()
+#[[
+if(WITH_LIBLAS)     # libLAS
+    set( LibLAS_DIR "${LIB_PRE_REQS}/libLAS-1.7.0" CACHE PATH "Location of LibLASConfig.cmake")
+    find_package( LibLAS REQUIRED)
+    include_directories( ${LibLAS_INCLUDE_DIR})
+endif()
+#]]
+
 
 if(WITH_TINYXML)    # tinyxml
     set( tinyxml_DIR "${LIB_PRE_REQS}/tinyxml/cmake" CACHE PATH "Location of tinyxmlConfig.cmake")
@@ -402,11 +427,13 @@ if(WITH_BOOST)  # Boost
     include_directories( ${Boost_INCLUDE_DIRS})
     set( Boost_LIBRARIES Boost::regex Boost::random Boost::thread Boost::filesystem Boost::system Boost::program_options)
 
-    #message( STATUS "Boost_VERSION: ${Boost_VERSION}")
-    #message( STATUS "Boost_LIB_VERSION: ${Boost_LIB_VERSION}")
-    #message( STATUS "Boost_MAJOR_VERSION: ${Boost_MAJOR_VERSION}")
-    #message( STATUS "Boost_MINOR_VERSION: ${Boost_MINOR_VERSION}")
-    #message( STATUS "Boost_SUBMINOR_VERSION: ${Boost_SUBMINOR_VERSION}")
+    #[[
+    message( STATUS "Boost_VERSION: ${Boost_VERSION}")
+    message( STATUS "Boost_LIB_VERSION: ${Boost_LIB_VERSION}")
+    message( STATUS "Boost_MAJOR_VERSION: ${Boost_MAJOR_VERSION}")
+    message( STATUS "Boost_MINOR_VERSION: ${Boost_MINOR_VERSION}")
+    message( STATUS "Boost_SUBMINOR_VERSION: ${Boost_SUBMINOR_VERSION}")
+    #]]
 
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${BOOST_LIBRARYDIR})
 endif()
@@ -421,10 +448,12 @@ if(WITH_CGAL)   # CGAL
 endif()
 
 
-#if(WITH_VCG)    # VCGLib (Visual and Computer Graphics Library)
-#    set( VCG_DIR "${LIB_PRE_REQS}/vcglib" CACHE PATH "Location of VCG header only library.")
-#    include_directories( ${VCG_DIR})    # Header only library
-#endif()
+#[[
+if(WITH_VCG)    # VCGLib (Visual and Computer Graphics Library)
+    set( VCG_DIR "${LIB_PRE_REQS}/vcglib" CACHE PATH "Location of VCG header only library.")
+    include_directories( ${VCG_DIR})    # Header only library
+endif()
+#]]
 
 
 if(WITH_CPD) # Coherent Point Drift

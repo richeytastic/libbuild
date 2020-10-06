@@ -1,9 +1,11 @@
-# Sets the correct library suffix for the linker given the platform and whether we want a debug build or not.
-# User should set CMAKE_BUILD_TYPE [debug/...] and BUILD_SHARED_LIBS [true/false] (or BUILD_USING_SHARED_LIBS) before calling.
-# lsuffix set to one of [platform;build type]:
-# .so   [UNIX;SHARED]          d.so  [UNIX;DEBUG,SHARED]
-# .a    [UNIX;STATIC]          d.a   [UNIX;DEBUG,STATIC]
-# .lib  [WIN32;STATIC/SHARED]  d.lib [WIN32;DEBUG,STATIC/SHARED]
+#[[
+Sets the correct library suffix for the linker given the platform and whether we want a debug build or not.
+User should set CMAKE_BUILD_TYPE [debug/...] and BUILD_SHARED_LIBS [true/false] (or BUILD_USING_SHARED_LIBS) before calling.
+lsuffix set to one of [platform;build type]:
+.so   [UNIX;SHARED]          d.so  [UNIX;DEBUG,SHARED]
+.a    [UNIX;STATIC]          d.a   [UNIX;DEBUG,STATIC]
+.lib  [WIN32;STATIC/SHARED]  d.lib [WIN32;DEBUG,STATIC/SHARED]
+#]]
 
 
 macro( get_debug_suffix dsuff)
@@ -51,11 +53,3 @@ macro( get_library_suffix lsuffix)
     set( ${lsuffix} ${_lsuffix})
 endmacro( get_library_suffix)
 
-
-macro( copy_over_dll libName)
-    get_shared_suffix( sosuff)
-    add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD      # post build event
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different          # execs "cmake -R copy_if_different ..."
-        "$ENV{INSTALL_PARENT_DIR}/${libName}/bin/${libName}${sosuff}"         # dll to copy
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>)                    # out path
-endmacro( copy_over_dll)

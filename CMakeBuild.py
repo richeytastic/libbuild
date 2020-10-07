@@ -118,11 +118,9 @@ class CMakeBuilder():
 
         # Copy across the other CMake config files into the development library cmake directory.
         tdir = os.path.join( self.__DEV_DIR, 'cmake')
-        shutil.copy( os.path.join( cmakeDir, 'Macros.cmake'), tdir)
         shutil.copy( os.path.join( cmakeDir, 'FindLibs.cmake'), tdir)
         shutil.copy( os.path.join( cmakeDir, 'LinkLibs.cmake'), tdir)
         shutil.copy( os.path.join( cmakeDir, 'LinkTargets.cmake'), tdir)
-        print( " + Updated {0}".format(os.path.join( tdir,'Macros.cmake')))
         print( " + Updated {0}".format(os.path.join( tdir,'FindLibs.cmake')))
         print( " + Updated {0}".format(os.path.join( tdir,'LinkLibs.cmake')))
         print( " + Updated {0}".format(os.path.join( tdir,'LinkTargets.cmake')))

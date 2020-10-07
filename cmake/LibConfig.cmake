@@ -26,12 +26,22 @@ set( <XXX>_INCLUDE_DIRS "${<XXX>_ROOT_DIR}/../include" CACHE PATH "The <XXX> inc
 set( <XXX>_BIN_DIR      "${<XXX>_ROOT_DIR}/../bin"     CACHE PATH "The <XXX> bin directory.")
 set( <XXX>_LIBRARY_DIR  "${<XXX>_ROOT_DIR}"            CACHE PATH "The <XXX> library directory.")
 
-include( "${CMAKE_CURRENT_LIST_DIR}/Macros.cmake")
-get_library_suffix( _lsuff)
-set( _hints <XXX>${_lsuff} lib<XXX>${_lsuff})
-find_library( <XXX>_LIBRARIES NAMES ${_hints} PATHS "${<XXX>_LIBRARY_DIR}/static" "${<XXX>_LIBRARY_DIR}")
+set( _prefix "")
+set( _suffix "-vc${MSVC_TOOLSET_VERSION}.lib")
+if(UNIX)
+    set( _prefix "lib")
+    if(BUILD_USING_SHARED_LIBS)
+        set( _suffix ".so")
+    else()
+        set( _suffix ".a")
+    endif()
+endif()
+
+set( _hint ${_prefix}<XXX>${_suffix})
+find_library( <XXX>_LIBRARIES NAMES ${_hint} PATHS "${<XXX>_LIBRARY_DIR}/static" "${<XXX>_LIBRARY_DIR}")
 set( <XXX>_LIBRARIES     ${<XXX>_LIBRARIES}         CACHE FILEPATH "The <XXX> imported libraries to link to.")
 
 # handle QUIETLY and REQUIRED args and set <XXX>_FOUND to TRUE if all listed variables are TRUE
 include( "${CMAKE_ROOT}/Modules/FindPackageHandleStandardArgs.cmake")
 find_package_handle_standard_args( <XXX> <XXX>_FOUND <XXX>_LIBRARIES <XXX>_INCLUDE_DIRS)
+

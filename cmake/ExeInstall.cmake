@@ -1,5 +1,4 @@
 include("$ENV{DEV_PARENT_DIR}/libbuild/cmake/LinkTargets.cmake")
-include("$ENV{DEV_PARENT_DIR}/libbuild/cmake/Macros.cmake")
 
 # Since Windows doesn't have the concept of RPATH's for import libraries, we need to copy over
 # all the required DLLs from all of the libraries used into the project's binary folder.

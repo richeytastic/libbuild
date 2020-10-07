@@ -159,7 +159,7 @@ class CMakeBuilder():
                self.__DEV_DIR]
 
         print( ' '.join(cmd))
-        if subprocess.call( cmd) != 0:
+        if subprocess.run( cmd).returncode != 0:
             print( "** Error with CMake configuration! **")
             return False
 
@@ -172,11 +172,11 @@ class CMakeBuilder():
 
     def getCMakeCacheVariable( self, varName):
         """Returns the value of CMake variable varName."""
-        os.chdir( self.__BUILD_DIR)
-        if not os.path.exists( 'CMakeCache.txt'):
+        cachefile = os.path.join( self.__BUILD_DIR, 'CMakeCache.txt')
+        if not os.path.exists( cachefile):
             return ""
 
-        for ln in open( 'CMakeCache.txt', 'r').readlines():
+        for ln in open( cachefile, 'r').readlines():
             if ln.startswith(varName):
                 x, z = ln.split('=')
                 x, y = x.split(':')  # Get the type into y (x == varName)
@@ -197,12 +197,12 @@ class CMakeBuilder():
             return False
 
         print( "~~~~~~~~~~~~~~~~~~~~~~| Building '{0}' {1} |~~~~~~~~~~~~~~~~~~~~~~~".format(self.__mname, self.__buildType))
-        os.chdir( self.__BUILD_DIR)
-        cmd = ['cmake', '--build', '.']
+        cmd = ['cmake', '--build', self.__BUILD_DIR]
         print( ' '.join(cmd))
-        if subprocess.call(cmd) != 0:
+        if subprocess.run(cmd).returncode != 0:
             print( " *** BUILD FAILED! ***")
             return False
+
         linkOk = self.__checkLinkage()
         if linkOk:
             print( "~~~| Finished building '{0}' {1} |~~~".format(self.__mname, self.__buildType))
@@ -217,10 +217,9 @@ class CMakeBuilder():
         print( "~~~~~~~~~~~~~~~~~~~~~| Installing '{0}' {1} |~~~~~~~~~~~~~~~~~~~~~~".format(self.__mname, self.__buildType))
         makeDirectoryPath( self.__INSTALL_DIR)  # Create the install directory if not already present
 
-        os.chdir( self.__BUILD_DIR)
-        cmd = ['cmake', '--build', '.', '--target', 'install']
+        cmd = ['cmake', '--build', self.__BUILD_DIR, '--target', 'install']
         print( ' '.join(cmd))
-        if subprocess.call(cmd) != 0:
+        if subprocess.run(cmd).returncode != 0:
             print( " *** INSTALL FAILED! ***")
             return False
         print( "~~~| Finished installing '{0}' {1} |~~~".format(self.__mname, self.__buildType))

@@ -37,7 +37,7 @@ if(UNIX)
     endif()
 endif()
 
-set( _hint ${_prefix}<XXX>${_suffix})
+set( _hint ${_prefix}<XXX>${_dsuffix}${_suffix})
 find_library( <XXX>_LIBRARIES NAMES ${_hint} PATHS "${<XXX>_LIBRARY_DIR}/static" "${<XXX>_LIBRARY_DIR}")
 set( <XXX>_LIBRARIES     ${<XXX>_LIBRARIES}         CACHE FILEPATH "The <XXX> imported libraries to link to.")
 

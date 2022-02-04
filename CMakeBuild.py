@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #************************************************************************
-# * Copyright (C) 2020 Richard Palmer
+# * Copyright (C) 2022 Richard Palmer
 # *
 # * This program is free software: you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import os
 import sys
 import shutil
 import subprocess
+from pathlib import Path
 
 
 class EnvDirs():
@@ -30,7 +31,7 @@ class EnvDirs():
 
     def getInstallEnv( self):
         if os.environ.get('INSTALL_PARENT_DIR') is None:
-            print( 'Env. var. INSTALL_PARENT_DIR must exist and specify the parent installation directory.')
+            print( 'Env. var. INSTALL_PARENT_DIR must exist and be the parent installation directory.')
             return ""
         idir = os.environ['INSTALL_PARENT_DIR']
         if not os.path.isdir(idir):
@@ -41,7 +42,7 @@ class EnvDirs():
 
     def getBuildEnv( self):
         if os.environ.get('BUILD_PARENT_DIR') is None:
-            print( 'Env. var. BUILD_PARENT_DIR must exist and specify the parent build directory.')
+            print( 'Env. var. BUILD_PARENT_DIR must exist and be the parent build directory.')
             return ""
         bdir = os.environ['BUILD_PARENT_DIR']
         if not os.path.isdir(bdir):
@@ -52,7 +53,7 @@ class EnvDirs():
 
     def getDevEnv( self):
         if os.environ.get('DEV_PARENT_DIR') is None:
-            print( 'Env. var DEV_PARENT_DIR must exist and point to the parent directory of the library source folders.')
+            print( 'Env. var DEV_PARENT_DIR must exist and be the parent of the library source directories.')
             return ""
         ddir = os.environ['DEV_PARENT_DIR']
         if not os.path.isdir(ddir):
@@ -81,7 +82,7 @@ def hasFileOnPath( fname):
     for pdir in pdirs:
         fpath = os.path.join(pdir, fname)
         if os.path.exists(fpath):
-            return fpath
+            return str(Path(fpath).resolve())
     return ""
 
 
@@ -150,13 +151,16 @@ class CMakeBuilder():
         #generator = 'NMake Makefiles JOM'   # Use JOM for multi-threaded builds
         #if sys.platform.startswith('linux'):
         #    generator = 'Unix Makefiles'
-        os.chdir( self.__BUILD_DIR)
+        #pwd = os.path.realpath(os.curdir)   # Remember current working directory
+        #os.chdir( self.__BUILD_DIR)         # Change to the build directory
+
         generator = 'Ninja' # Use Ninja for Windows and Linux
         cmd = ['cmake',
                '-G', generator,
                '-DCMAKE_BUILD_TYPE={0}'.format(self.__buildType),
                '-DCMAKE_INSTALL_PREFIX={0}'.format(self.__INSTALL_DIR),
-               self.__DEV_DIR]
+               '-S', self.__DEV_DIR,
+               '-B', self.__BUILD_DIR]
 
         print( ' '.join(cmd))
         if subprocess.run( cmd).returncode != 0:
@@ -164,13 +168,13 @@ class CMakeBuilder():
             return False
 
         # Set the project name from the generated CMakeCache.txt
-        self.__projectName = self.getCMakeCacheVariable( 'CMAKE_PROJECT_NAME');
+        self.__projectName = self.__getCMakeCacheVariable( 'CMAKE_PROJECT_NAME');
 
         print( "~~~| Finished configuring '{0}' {1} |~~~".format(self.__mname, self.__buildType))
         return True
 
 
-    def getCMakeCacheVariable( self, varName):
+    def __getCMakeCacheVariable( self, varName):
         """Returns the value of CMake variable varName."""
         cachefile = os.path.join( self.__BUILD_DIR, 'CMakeCache.txt')
         if not os.path.exists( cachefile):
@@ -199,14 +203,14 @@ class CMakeBuilder():
         print( "~~~~~~~~~~~~~~~~~~~~~~| Building '{0}' {1} |~~~~~~~~~~~~~~~~~~~~~~~".format(self.__mname, self.__buildType))
         cmd = ['cmake', '--build', self.__BUILD_DIR]
         print( ' '.join(cmd))
+        okay = False
         if subprocess.run(cmd).returncode != 0:
             print( " *** BUILD FAILED! ***")
-            return False
-
-        linkOk = self.__checkLinkage()
-        if linkOk:
+        else:
+            okay = self.__checkLinkage()
+        if okay:
             print( "~~~| Finished building '{0}' {1} |~~~".format(self.__mname, self.__buildType))
-        return linkOk
+        return okay
 
 
     def install( self):
@@ -219,11 +223,13 @@ class CMakeBuilder():
 
         cmd = ['cmake', '--build', self.__BUILD_DIR, '--target', 'install']
         print( ' '.join(cmd))
+        okay = False
         if subprocess.run(cmd).returncode != 0:
             print( " *** INSTALL FAILED! ***")
-            return False
+        else:
+            okay = True
         print( "~~~| Finished installing '{0}' {1} |~~~".format(self.__mname, self.__buildType))
-        return True
+        return okay
 
 
     def __checkLinkage( self):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #************************************************************************
-# * Copyright (C) 2020 Richard Palmer
+# * Copyright (C) 2022 Richard Palmer
 # *
 # * This program is free software: you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,19 @@ from CMakeBuild import CMakeBuilder
 from CMakeBuild import EnvDirs
 from CMakeBuild import hasFileOnPath
 import shutil
+import time
 import sys
 import os
 
 
-def getLibraryList():
+def __getLibraryList():
     libList = ['rlib', 'rimg', 'r3d', 'r3dio', 'r3dvis', 'rNonRigid', 'QTools', 'FaceTools']  # Build these
     return libList
 
 
-def getModules( args):
+def __getModules( args):
     """Get the paths to the modules/libraries the user wants to build."""
-    libList = getLibraryList()
+    libList = __getLibraryList()
     libDict = {}
     for l in libList:
         libDict[l.lower()] = l
@@ -56,14 +57,14 @@ def getModules( args):
     return makeDebug, doInstall, doClean, ms
 
 
-def cleanDirectory( d, lname):
+def __cleanDirectory( d, lname):
     fulld = os.path.join( d, lname)
     if fulld != "" and os.path.exists( fulld):
         shutil.rmtree( fulld, ignore_errors=True)
 
 
 if __name__ == "__main__":
-    makeDebug, doInstall, doClean, ms = getModules( sys.argv[1:])
+    makeDebug, doInstall, doClean, ms = __getModules( sys.argv[1:])
 
     cmakeexe = "cmake"
     ninjaexe = "ninja"
@@ -73,15 +74,16 @@ if __name__ == "__main__":
 
     cmakepath = hasFileOnPath(cmakeexe)
     ninjapath = hasFileOnPath(ninjaexe)
-
     hascmake = len(cmakepath) > 0
     hasninja = len(ninjapath) > 0
+
+    CMAKE_DIR = os.path.dirname(os.path.realpath(__file__)) + '{0}cmake'.format( os.path.sep) # adjacent cmake directory
 
     if len(ms) == 0:
         print( "Usage: {0} (library1 [library2 ...] | all) ([debug] [install]) | [clean]".format(sys.argv[0]))
         print()
         print( " This script uses CMake to configure and generate scripts for the Ninja build system for the following libraries:")
-        libList = getLibraryList()
+        libList = __getLibraryList()
         for lib in libList:
             print( " - %s" % lib)
 
@@ -92,9 +94,9 @@ if __name__ == "__main__":
         print( " Passing 'clean' will remove all build and install directories for the specified libraries.")
         print()
         print( " The following environment variables must be set to use this script:")
-        print( " DEV_PARENT_DIR     : The parent directory of library source directories (e.g. ~/dev/lib)")
-        print( " BUILD_PARENT_DIR   : The parent directory for where building happens (e.g. ~/local_builds)")
-        print( " INSTALL_PARENT_DIR : The parent directory for library installation (e.g. ~/local_libs)")
+        print( " DEV_PARENT_DIR     : Directory with library sources (e.g. ~/dev/lib)")
+        print( " BUILD_PARENT_DIR   : Directory for building libraries (e.g. ~/local_builds)")
+        print( " INSTALL_PARENT_DIR : Directory for installing libraries (e.g. ~/local_libs)")
         print()
         if hascmake:
             print( " CMake found at {0}".format(cmakepath))
@@ -106,52 +108,41 @@ if __name__ == "__main__":
             print( " ninja was not found on PATH!")
         sys.exit(0)
 
-    envVars = EnvDirs()
-    devDir = envVars.getDevEnv()
-    buildDir = envVars.getBuildEnv()
-    installDir = envVars.getInstallEnv()
-
-    if buildDir == "":
-        print( "Exiting - building not available; ensure BUILD_PARENT_DIR is set.")
+    if not hascmake or not hasninja:
+        print( "Exiting - cmake and/or ninja was not found on the PATH!")
         sys.exit(-1)
 
-    if (doInstall or doClean) and installDir == "":
-        print( "Exiting - installation not available; ensure INSTALL_PARENT_DIR is set.")
-        sys.exit(-2)
+    envVars = EnvDirs()
+    devDir = envVars.getDevEnv()
+    bldDir = envVars.getBuildEnv()
+    insDir = envVars.getInstallEnv()
 
     if doClean:
         for mname in ms:
-            cleanDirectory( buildDir, mname)
-            cleanDirectory( installDir, mname)
+            __cleanDirectory( bldDir, mname)
+            __cleanDirectory( insDir, mname)
+            print( "Removed build and install directories for library {0}.".format(mname))
         sys.exit(0)
 
-    if not hascmake:
-        print( "Exiting - cmake was not found on the PATH - please fix and try again.")
-        sys.exit(-3)
+    if devDir == "" or bldDir == "" or insDir == "":
+        print( "Exiting: required environment variables not set!")
+        sys.exit(-2)
 
-    if not hasninja:
-        print( "Exiting - ninja was not found on the PATH - please fix and try again.")
-        sys.exit(-4)
-
-    if not os.path.exists(devDir):
-        print( "Exiting - building not available; Ensure DEV_PARENT_DIR is set to a valid path where the libraries are located.")
-        sys.exit(-5)
-
-    cmakeDir = os.path.dirname(os.path.realpath(sys.argv[0])) + '{0}cmake'.format( os.path.sep) # adjacent cmake directory
     for mname in ms:
         libDevDir = os.path.join( devDir, mname)
 
         if not os.path.exists(libDevDir):
             print( "*** ERROR *** : Missing library directory '{0}' - aborting!".format(libDevDir))
-            sys.exit(-6)
+            sys.exit(-3)
 
         mb = CMakeBuilder( libDevDir, makeDebug)
-        mb.makeLibraryFindConfig( cmakeDir)
+        mb.makeLibraryFindConfig( CMAKE_DIR)    # Updates cmake files in library dev directory
 
-        libBuildDir = os.path.join( os.path.join( buildDir, mname), mb.buildType())
-        libInstallDir = os.path.join( installDir, mname)
+        libBldDir = os.path.join( os.path.join( bldDir, mname), mb.buildType())
+        libInsDir = os.path.join( insDir, mname)
 
-        if mb.cmake( libBuildDir, libInstallDir):
+        if mb.cmake( libBldDir, libInsDir):
+            time.sleep(2)   # To prevent cmake from repeating self calls
             buildOk = mb.build()
             if not buildOk:
                 break

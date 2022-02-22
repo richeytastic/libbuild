@@ -200,9 +200,8 @@ if(WIN32)
         file( COPY "${QT_BIN}/../plugins/imageformats/qsvg${_dsuffix}.dll" DESTINATION "${_tdest}/imageformats")
         file( COPY "${QT_BIN}/../plugins/imageformats/qico${_dsuffix}.dll" DESTINATION "${_tdest}/imageformats")
 
-        set( _openssl "$ENV{programfiles}/OpenSSL-Win64/bin")
-        file( COPY "${_openssl}/libcrypto-1_1-x64.dll" DESTINATION "${_tdest}")
-        file( COPY "${_openssl}/libssl-1_1-x64.dll" DESTINATION "${_tdest}")
+        file( COPY "${OPENSSL_LIB_CRYPTO}" DESTINATION "${_tdest}")
+        file( COPY "${OPENSSL_LIB_SSL}" DESTINATION "${_tdest}")
     endif()
 
     # Install Windows specific gubbins

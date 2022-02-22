@@ -367,7 +367,8 @@ if(WITH_QT)     # Qt5
     if(NOT IS_DIRECTORY ${Qt5_DIR})
         message( FATAL_ERROR "Can't find Qt5! Set environment variable QT5 to the location of the library!")
     endif()
-    get_filename_component( QT_INSTALLER_FRAMEWORK "$ENV{QT5}/../../Tools/QtInstallerFramework/4.2/bin" REALPATH)
+    get_filename_component( Qt5_TOOLS "$ENV{QT5}/../../Tools" REALPATH)
+    set( QT_INSTALLER_FRAMEWORK "${Qt5_TOOLS}/QtInstallerFramework/4.2/bin")
     set( QT_INF_BINARY_CREATOR "${QT_INSTALLER_FRAMEWORK}/binarycreator${CMAKE_EXECUTABLE_SUFFIX}")
     set( QT_INF_REPO_GEN "${QT_INSTALLER_FRAMEWORK}/repogen${CMAKE_EXECUTABLE_SUFFIX}")
 
@@ -384,6 +385,22 @@ if(WITH_QT)     # Qt5
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${QT_LIB_DIR})
 
     message( STATUS "Qt5:               ${Qt5_DIR}")
+
+    # Define the location of the Qt Tools version of OpenSSL.
+    set( QT_SSL_LIB_DIR "${Qt5_TOOLS}/OpenSSL/binary/lib")
+    set( OPENSSL_LIB_CRYPTO "${QT_SSL_LIB_DIR}/libcrypto.so.1.1")
+    set( OPENSSL_LIB_SSL "${QT_SSL_LIB_DIR}/libssl.so.1.1")
+    if(WIN32)
+        set( QT_SSL_LIB_DIR "${Qt5_TOOLS}/OpenSSL/Win_x64/bin")
+        set( OPENSSL_LIB_CRYPTO "${QT_SSL_LIB_DIR}/libcrypto-1_1-x64.dll")
+        set( OPENSSL_LIB_SSL "${QT_SSL_LIB_DIR}/libssl-1_1-x64.dll")
+    endif()
+
+    if ( EXISTS "${OPENSSL_LIB_CRYPTO}" AND EXISTS "${OPENSSL_LIB_SSL}")
+        message( STATUS "Qt5 OpenSSL:       ${QT_SSL_LIB_DIR}")
+    else()
+        message( FATAL_ERROR "Ensure you have installed the Qt provided version of the OpenSSL binaries!")
+    endif()
 endif()
 
 

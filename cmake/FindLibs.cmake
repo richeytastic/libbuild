@@ -4,7 +4,7 @@ set( CMAKE_VERBOSE_MAKEFILE FALSE)
 if(UNIX)
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-deprecated -Wno-deprecated-declarations -Wno-error=unknown-pragmas")
 endif()
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set( LIB_PRE_REQS "$ENV{INSTALL_PARENT_DIR}" CACHE PATH
     "Where library prerequisites are installed (if not in the standard system library locations).")
@@ -253,9 +253,8 @@ endif()
 
 
 if(WITH_ASSIMP)     # AssImp
-    set( ASSIMP_DIR "${LIB_PRE_REQS}/AssImp/lib/cmake/assimp-5.1" CACHE PATH "Location of assimp-config.cmake")
+    set( ASSIMP_DIR "${LIB_PRE_REQS}/AssImp/lib/cmake/assimp-5.2" CACHE PATH "Location of assimpConfig.cmake")
     find_package( assimp REQUIRED)
-    #find_package( ASSIMP REQUIRED)
     include_directories( ${ASSIMP_INCLUDE_DIRS})
     link_directories( ${ASSIMP_LIBRARY_DIRS})
     #[[
@@ -374,7 +373,7 @@ if(WITH_QT)     # Qt5
         message( FATAL_ERROR "Can't find Qt5! Set environment variable QT5 to the location of the library!")
     endif()
     get_filename_component( Qt5_TOOLS "$ENV{QT5}/../../Tools" REALPATH)
-    set( QT_INSTALLER_FRAMEWORK "${Qt5_TOOLS}/QtInstallerFramework/4.2/bin")
+    set( QT_INSTALLER_FRAMEWORK "${Qt5_TOOLS}/QtInstallerFramework/4.4/bin")
     set( QT_INF_BINARY_CREATOR "${QT_INSTALLER_FRAMEWORK}/binarycreator${CMAKE_EXECUTABLE_SUFFIX}")
     set( QT_INF_REPO_GEN "${QT_INSTALLER_FRAMEWORK}/repogen${CMAKE_EXECUTABLE_SUFFIX}")
 
@@ -411,9 +410,9 @@ endif()
 
 
 if(WITH_OPENCV) # OpenCV
-    set( OpenCV_BASE "${LIB_PRE_REQS}/opencv-4.3.0")
+    set( OpenCV_BASE "${LIB_PRE_REQS}/opencv-4.6.0")
     set( OpenCV_DIR "${OpenCV_BASE}" CACHE PATH "Location of OpenCVConfig.cmake")
-    find_package( OpenCV 4.3 REQUIRED)
+    find_package( OpenCV 4.6 REQUIRED)
     if(WIN32)
         set( OpenCV_MSVC "${OpenCV_DIR}/$ENV{PLATFORM}/vc16")
         set( OpenCV_BIN "${OpenCV_MSVC}/bin" CACHE PATH "Location of OpenCV binary (DLL) files")

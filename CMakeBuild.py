@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/bin/env python3
 
 #************************************************************************
 # * Copyright (C) 2022 Richard Palmer
@@ -26,10 +26,10 @@ from pathlib import Path
 
 class EnvDirs():
     """Gets environment variables for building and installing."""
-    def __init__(self):
+    def __init__(self) -> None:
         self.__errStr = "{0} is not a valid directory! Set env. var. {1} to the parent directory for the module's {2} directory."
 
-    def getInstallEnv( self):
+    def getInstallEnv( self) -> str:
         if os.environ.get('INSTALL_PARENT_DIR') is None:
             print( 'Env. var. INSTALL_PARENT_DIR must exist and be the parent installation directory.')
             return ""
@@ -40,7 +40,7 @@ class EnvDirs():
         return idir
 
 
-    def getBuildEnv( self):
+    def getBuildEnv( self) -> str:
         if os.environ.get('BUILD_PARENT_DIR') is None:
             print( 'Env. var. BUILD_PARENT_DIR must exist and be the parent build directory.')
             return ""
@@ -51,7 +51,7 @@ class EnvDirs():
         return bdir
 
 
-    def getDevEnv( self):
+    def getDevEnv( self) -> str:
         if os.environ.get('DEV_PARENT_DIR') is None:
             print( 'Env. var DEV_PARENT_DIR must exist and be the parent of the library source directories.')
             return ""
@@ -62,7 +62,7 @@ class EnvDirs():
         return ddir
 
 
-def makeDirectoryPath( bdir, warn=True):
+def makeDirectoryPath( bdir, warn=True) -> None:
     adir = os.path.realpath(bdir)
     bdir = adir
     if warn and not os.path.exists( bdir):
@@ -76,7 +76,7 @@ def makeDirectoryPath( bdir, warn=True):
         os.mkdir(adir)
 
 
-def hasFileOnPath( fname):
+def hasFileOnPath( fname) -> str:
     """Returns the full path to the given file iff the file is found on the PATH."""
     pdirs = os.environ['PATH'].split(os.pathsep)
     for pdir in pdirs:
@@ -89,8 +89,9 @@ def hasFileOnPath( fname):
 class CMakeBuilder():
     """Platform agnostic building of C++ modules using CMake."""
 
-    def __init__(self, devdir, makeDebug):
-        self.__mname = devdir.split(os.path.sep)[-1]
+    def __init__(self, devdir, makeDebug, mname:str="") -> None:
+        # Get the module name from devdir unless specified explicitly
+        self.__mname = devdir.split(os.path.sep)[-1] if mname == "" else mname
         self.__buildType = 'Debug' if makeDebug else 'Release'
 
         # if devdir is a name, it won't exist on the filesystem
@@ -103,11 +104,11 @@ class CMakeBuilder():
         self.__DEV_DIR = devdir
 
 
-    def buildType( self):
+    def buildType( self) -> str:
         return self.__buildType
 
 
-    def makeLibraryFindConfig( self, cmakeDir):
+    def makeLibraryFindConfig( self, cmakeDir) -> bool:
         if not os.path.exists(self.__DEV_DIR):
             print( "Cannot configure library cmake files - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
             return False
@@ -137,7 +138,7 @@ class CMakeBuilder():
         return True
 
 
-    def cmake( self, buildDir, installDir):
+    def cmake( self, buildDir, installDir) -> bool:
         if not os.path.exists( self.__DEV_DIR):
             print( "Cannot configure - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
             return False
@@ -174,7 +175,7 @@ class CMakeBuilder():
         return True
 
 
-    def __getCMakeCacheVariable( self, varName):
+    def __getCMakeCacheVariable( self, varName) -> str:
         """Returns the value of CMake variable varName."""
         cachefile = os.path.join( self.__BUILD_DIR, 'CMakeCache.txt')
         if not os.path.exists( cachefile):
@@ -195,7 +196,7 @@ class CMakeBuilder():
         return ""   # Not found
 
 
-    def build( self):
+    def build( self) -> bool:
         if not os.path.exists(self.__DEV_DIR):
             print( "Cannot build - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
             return False
@@ -203,17 +204,16 @@ class CMakeBuilder():
         print( "~~~~~~~~~~~~~~~~~~~~~~| Building '{0}' {1} |~~~~~~~~~~~~~~~~~~~~~~~".format(self.__mname, self.__buildType))
         cmd = ['cmake', '--build', self.__BUILD_DIR]
         print( ' '.join(cmd))
-        okay = False
+        okay = True
         if subprocess.run(cmd).returncode != 0:
+            okay = False
             print( " *** BUILD FAILED! ***")
         else:
-            okay = self.__checkLinkage()
-        if okay:
             print( "~~~| Finished building '{0}' {1} |~~~".format(self.__mname, self.__buildType))
         return okay
 
 
-    def install( self):
+    def install( self) -> bool:
         if not os.path.exists(self.__DEV_DIR):
             print( "Cannot install - the source directory wasn't found at {0}!".format(self.__DEV_DIR))
             return False
@@ -232,27 +232,32 @@ class CMakeBuilder():
         return okay
 
 
-    def __checkLinkage( self):
+    def isLinkageOkay( self) -> bool:
         """Check link dependencies of shared lib (Linux only) in build directory.
            Does nothing if no shared library present."""
         if not sys.platform.startswith("linux"):
             print( "Correct library linkage assumed; run dependency walker to check.")
             return True
 
-        debugSuffix = 'd' if self.__buildType == 'Debug' else ''
-        libPath = "lib{0}{1}.so".format(self.__projectName, debugSuffix)
         # Check if the shared lib exists with standard naming convension.
+        debugSuffix = 'd' if self.__buildType == 'Debug' else ''
+        libPath = os.path.join( self.__BUILD_DIR, "lib{0}{1}.so".format(self.__projectName, debugSuffix))
         if not os.path.exists(libPath):
-            return True
+            print( '"{0}" does not exist!'.format( libPath))
+            return False
 
         rval = True
-        lddout = subprocess.check_output(['ldd', libPath], universal_newlines=True).split('\n')
-        missinglibs = [ln.strip() for ln in lddout if ln.find('not found') >= 0]
-        if len(missinglibs) > 0:
-            print( " *** LINKING FAILED! ***")
-            for ln in missinglibs:
-                print( ln)
-            rval = False
+        try:
+            print( 'Checking library linkage for "{0}"'.format( libPath))
+            lddout = subprocess.check_output(['ldd', libPath], universal_newlines=True).split('\n')
+            missinglibs = [ln.strip() for ln in lddout if ln.find('not found') >= 0]
+            if len(missinglibs) > 0:
+                print( " *** LINKING FAILED! ***")
+                for ln in missinglibs:
+                    print( ln)
+                rval = False
+        except:
+            print( '** WARNING ** ldd failed! Assuming correct linkage.')
 
         return rval
 

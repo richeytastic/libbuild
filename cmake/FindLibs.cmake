@@ -43,9 +43,9 @@ if(WITH_TESTUTILS)
     find_package( TestUtils REQUIRED)
     include_directories( ${TestUtils_INCLUDE_DIRS})
     link_directories( ${TestUtils_LIBRARY_DIR})
-    set(WITH_FACETOOLS TRUE)
     message( STATUS "TestUtils:         ${TestUtils_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${TestUtils_LIBRARY_DIR})
+    set(WITH_FACETOOLS TRUE)
 endif()
 
 
@@ -54,12 +54,12 @@ if(WITH_FACETOOLS)
     find_package( FaceTools REQUIRED)
     include_directories( ${FaceTools_INCLUDE_DIRS})
     link_directories( ${FaceTools_LIBRARY_DIR})
+    message( STATUS "FaceTools:         ${FaceTools_LIBRARIES}")
+    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${FaceTools_LIBRARY_DIR})
     set(WITH_R3DIO TRUE)
     set(WITH_QTOOLS TRUE)
     set(WITH_RNONRIGID TRUE)
-    set(WITH_LUA TRUE)
-    message( STATUS "FaceTools:         ${FaceTools_LIBRARIES}")
-    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${FaceTools_LIBRARY_DIR})
+    set(WITH_SOL TRUE)
 endif()
 
 
@@ -68,10 +68,6 @@ if(WITH_QTOOLS)
     find_package( QTools REQUIRED)
     include_directories( ${QTools_INCLUDE_DIRS})
     link_directories( ${QTools_LIBRARY_DIR})
-    set(WITH_R3DVIS TRUE)
-    set(WITH_QUAZIP TRUE)
-    set(WITH_QT TRUE)
-
     message( STATUS "QTools:            ${QTools_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${QTools_LIBRARY_DIR})
 
@@ -93,6 +89,10 @@ if(WITH_QTOOLS)
         message( FATAL_ERROR "Can't find ${updateTool}!")
     endif()
     message( STATUS "updateTool:        ${updateToolPath}")
+
+    set(WITH_R3DVIS TRUE)
+    set(WITH_QUAZIP TRUE)
+    set(WITH_QT TRUE)
 endif()
 
 
@@ -101,11 +101,11 @@ if(WITH_R3DVIS)
     find_package( r3dvis REQUIRED)
     include_directories( ${r3dvis_INCLUDE_DIRS})
     link_directories( ${r3dvis_LIBRARY_DIR})
+    message( STATUS "r3dvis:            ${r3dvis_LIBRARIES}")
+    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${r3dvis_LIBRARY_DIR})
     set(WITH_RIMG TRUE)
     set(WITH_R3D TRUE)
     set(WITH_VTK TRUE)
-    message( STATUS "r3dvis:            ${r3dvis_LIBRARIES}")
-    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${r3dvis_LIBRARY_DIR})
 endif()
 
 
@@ -114,10 +114,10 @@ if(WITH_RPASCALVOC)
     find_package( rPascalVOC REQUIRED)
     include_directories( ${rPascalVOC_INCLUDE_DIRS})
     link_directories( ${rPascalVOC_LIBRARY_DIR})
-    set(WITH_TINYXML TRUE)
-    set(WITH_RLEARNING TRUE)
     message( STATUS "rPascalVOC:        ${rPascalVOC_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${rPascalVOC_LIBRARY_DIR})
+    set(WITH_TINYXML TRUE)
+    set(WITH_RLEARNING TRUE)
 endif()
 
 
@@ -126,9 +126,9 @@ if(WITH_RLEARNING)
     find_package( rLearning REQUIRED)
     include_directories( ${rLearning_INCLUDE_DIRS})
     link_directories( ${rLearning_LIBRARY_DIR})
-    set(WITH_RIMG TRUE)
     message( STATUS "rLearning:         ${rLearning_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${rLearning_LIBRARY_DIR})
+    set(WITH_RIMG TRUE)
 endif()
 
 
@@ -137,11 +137,11 @@ if(WITH_R3DIO)
     find_package( r3dio REQUIRED)
     include_directories( ${r3dio_INCLUDE_DIRS})
     link_directories( ${r3dio_LIBRARY_DIR})
+    message( STATUS "r3dio:             ${r3dio_LIBRARIES}")
+    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${r3dio_LIBRARY_DIR})
     set(WITH_RIMG TRUE)
     set(WITH_R3D TRUE)
     set(WITH_ASSIMP TRUE)
-    message( STATUS "r3dio:             ${r3dio_LIBRARIES}")
-    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${r3dio_LIBRARY_DIR})
 endif()
 
 
@@ -150,10 +150,11 @@ if(WITH_RIMG)
     find_package( rimg REQUIRED)
     include_directories( ${rimg_INCLUDE_DIRS})
     link_directories( ${rimg_LIBRARY_DIR})
-    set(WITH_RLIB TRUE)
-    set(WITH_OPENCV TRUE)
     message( STATUS "rimg:              ${rimg_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${rimg_LIBRARY_DIR})
+    set(WITH_RLIB TRUE)
+    set(WITH_ZLIB TRUE)
+    set(WITH_OPENCV TRUE)
 endif()
 
 
@@ -183,12 +184,12 @@ if(WITH_R3D)
     find_package( r3d REQUIRED)
     include_directories( ${r3d_INCLUDE_DIRS})
     link_directories( ${r3d_LIBRARY_DIR})
+    message( STATUS "r3d:               ${r3d_LIBRARIES}")
+    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${r3d_LIBRARY_DIR})
     set(WITH_BOOST TRUE)
     set(WITH_EIGEN TRUE)
     set(WITH_OPENCV TRUE)
     set(WITH_NANOFLANN TRUE)
-    message( STATUS "r3d:               ${r3d_LIBRARIES}")
-    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${r3d_LIBRARY_DIR})
 endif()
 
 
@@ -197,10 +198,10 @@ if(WITH_RLIB)
     find_package( rlib REQUIRED)
     include_directories( ${rlib_INCLUDE_DIRS})
     link_directories( ${rlib_LIBRARY_DIR})
-    set(WITH_BOOST TRUE)
-    set(WITH_EIGEN TRUE)
     message( STATUS "rlib:              ${rlib_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${rlib_LIBRARY_DIR})
+    set(WITH_BOOST TRUE)
+    set(WITH_EIGEN TRUE)
 endif()
 
 
@@ -209,22 +210,23 @@ if(WITH_RNONRIGID)
     find_package( rNonRigid REQUIRED)
     include_directories( ${rNonRigid_INCLUDE_DIRS})
     link_directories( ${rNonRigid_LIBRARY_DIR})
-    set(WITH_EIGEN TRUE)
-    set(WITH_NANOFLANN TRUE)
     message( STATUS "rNonRigid:         ${rNonRigid_LIBRARIES}")
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${rNonRigid_LIBRARY_DIR})
+    set(WITH_EIGEN TRUE)
+    set(WITH_NANOFLANN TRUE)
 endif()
 
 
 if(WITH_EIGEN) # Eigen3
     set( Eigen3_DIR "${LIB_PRE_REQS}/eigen3/share/eigen3/cmake" CACHE PATH "Location of Eigen3Config.cmake")
-    find_package( Eigen3 REQUIRED)
-    if( NOT EIGEN3_FOUND)
-        message( FATAL_ERROR "Can't find Eigen3!")
-    else()
-        include_directories( ${EIGEN3_INCLUDE_DIR})
-        message( STATUS "eigen3:            ${EIGEN3_INCLUDE_DIR}")
-    endif()
+    find_package( Eigen3 3.4 REQUIRED)
+    message( STATUS "eigen3:            ${EIGEN3_INCLUDE_DIR}")
+    #set( Eigen3_INCLUDE_DIR "${LIB_PRE_REQS}/eigen3/include/eigen3" CACHE PATH "Include directory of Eigen3")
+    #if(EIGEN3_FOUND)
+    #    include_directories( ${EIGEN3_INCLUDE_DIR})
+    #else()
+    #    message( FATAL_ERROR "Can't find Eigen3!")
+    #endif()
 endif()
 
 
@@ -234,84 +236,59 @@ if(WITH_NANOFLANN)
 endif()
 
 
+if(WITH_ZLIB)
+    # Uses standard CMake module FindZLIB.cmake but required ZLIB_ROOT
+    # to be set to the locally installed version to prevent any available
+    # system version from being detected instead. Note that all other
+    # external libraries depending on zlib should use this same locally
+    # installed version to keep all dynamic dependencies aligned to the
+    # same version and prevent any weird runtime issues.
+    set(ZLIB_ROOT "${LIB_PRE_REQS}/zlib" CACHE PATH "Location of zlib")
+    find_package( ZLIB REQUIRED)
+    include_directories( ${ZLIB_INCLUDE_DIRS})
+    message( STATUS "zlib:              ${ZLIB_LIBRARIES}")
+endif()
+
+
 if(WITH_QUAZIP)     # QuaZIP
-    #[[
-    set(QuaZip_DIR "${LIB_PRE_REQS}/quazip/cmake" CACHE PATH "Location of QuaZip (Qt/C++ wrapper for Minizip)")
-    find_package( QuaZip REQUIRED)
-    include_directories( ${QuaZip_INCLUDE_DIRS})
-    link_directories( ${QuaZip_LIBRARY_DIR})
-    message( STATUS "QuaZip:            ${QuaZip_LIBRARIES}")
-    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${QuaZip_LIBRARY_DIR})
-    if (WIN32)
-        set(WITH_ZLIB TRUE)
-    endif()
-    #]]
+    set(WITH_ZLIB TRUE)
+    set(WITH_QT TRUE)
     set( QuaZip-Qt5_DIR "${LIB_PRE_REQS}/quazip-1.3/lib/cmake/QuaZip-Qt5-1.3" CACHE PATH "Location of QuaZip (Qt/C++ wrapper for Minizip)")
     find_package( QuaZip-Qt5 REQUIRED)
-    set(WITH_QT TRUE)
 endif()
 
 
 if(WITH_ASSIMP)     # AssImp
-    set( ASSIMP_DIR "${LIB_PRE_REQS}/AssImp/lib/cmake/assimp-5.2" CACHE PATH "Location of assimpConfig.cmake")
+    set(WITH_ZLIB TRUE)
+    set(ASSIMP_DIR "${LIB_PRE_REQS}/AssImp-5.2.5/lib/cmake/assimp-5.2" CACHE PATH "Location of assimpConfig.cmake")
     find_package( assimp REQUIRED)
-    include_directories( ${ASSIMP_INCLUDE_DIRS})
-    link_directories( ${ASSIMP_LIBRARY_DIRS})
-    #[[
-    if (WIN32)
-        set(WITH_ZLIB TRUE)
-    endif()
-    #]]
-    message( STATUS "AssImp:            ${ASSIMP_LIBRARY_DIRS}/${ASSIMP_LIBRARIES}")
-    set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${ASSIMP_LIBRARY_DIRS})
+    #include_directories( ${ASSIMP_INCLUDE_DIRS})
 endif()
 
 
-#[[
-# Link to separately compiled zlib on Windows.
-if(WITH_ZLIB)
-    set( ZLIB_DIR "${LIB_PRE_REQS}/zlib" CACHE PATH "Location of zlib")
-    set( ZLIB_INCLUDE_DIR "${ZLIB_DIR}/include")
-    set( ZLIB_LIBRARY_DIR "${ZLIB_DIR}/lib")
-    set( ZLIB_LIBRARIES "${ZLIB_LIBRARY_DIR}/zlibstatic${_dsuffix}${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    set( ZLIB_LIBRARY "${ZLIB_DIR}/bin/zlib${_dsuffix}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    if ( NOT EXISTS ${ZLIB_LIBRARY})
-        message( FATAL_ERROR "Can't find zlib library at ${ZLIB_LIBRARY}!")
-    endif()
-    include_directories( "${ZLIB_INCLUDE_DIR}")
-    #link_directories( "${ZLIB_LIBRARY_DIR}")
-    message( STATUS "Zlib:              ${ZLIB_LIBRARIES}")
-    #set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${ZLIB_LIBRARY_DIR})
+# Lua with sol2 for C++ communication with data loaded via dynamically executed Lua scripts
+if(WITH_SOL)
+    set( sol2_DIR "${LIB_PRE_REQS}/sol/lib/cmake/sol2" CACHE PATH "Location of sol2-config.cmake)")
+    find_package( sol2 REQUIRED)
+    include_directories( "${SOL2_INCLUDE_DIRS}")
+    message( STATUS "sol2:              ${SOL2_INCLUDE_DIRS}")
+    set( WITH_LUA TRUE)
 endif()
-#]]
 
 
 if(WITH_LUA)
     set( LUA_DIR "${LIB_PRE_REQS}/lua5" CACHE PATH "Location of Lua")
-    set( LUA_INCLUDE_DIRS "${LUA_DIR}/include")
     set( LUA_LIBRARY_DIR  "${LUA_DIR}/lib")
-    set( LUA_LIBRARY "${LUA_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua53${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    set( LUA_LIBRARIES "${LUA_LIBRARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}lua53${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    if(UNIX)
-        set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${LUA_LIBRARY_DIR})
-    endif()
-    set( SOL_HPP "${LUA_INCLUDE_DIRS}/sol.hpp")
-
+    set( LUA_INCLUDE_DIRS "${LUA_DIR}/include")
+    set( LUA_LIBRARY "${LUA_LIBRARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX}")
     if(NOT EXISTS ${LUA_LIBRARY})
         message( FATAL_ERROR "Can't find Lua library at ${LUA_LIBRARY}!")
     endif()
-
-    if(NOT EXISTS ${LUA_LIBRARIES})
-        message( FATAL_ERROR "Can't find Lua library at ${LUA_LIBRARIES}!")
+    if(UNIX)
+        set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${LUA_LIBRARY_DIR})
     endif()
-
-    if(NOT EXISTS "${SOL_HPP}")
-        message( FATAL_ERROR "Can't find ${SOL_HPP}!")
-    endif()
-
-    include_directories( "${LUA_INCLUDE_DIRS}")
-    message( STATUS "Lua:               ${LUA_LIBRARIES}")
-    message( STATUS "sol.hpp:           ${SOL_HPP}")
+    include_directories( ${LUA_INCLUDE_DIRS})
+    message( STATUS "Lua:               ${LUA_LIBRARY}")
 endif()
 
 
@@ -351,9 +328,11 @@ endif()
 
 
 if(WITH_VTK)    # VTK
-    set( VTK_VERSION "9.1")
-    set( VTK_BASE "${LIB_PRE_REQS}/VTK-${VTK_VERSION}.0")
-    set( VTK_DIR "${VTK_BASE}/lib/cmake/vtk-${VTK_VERSION}" CACHE PATH "Location of VTKConfig.cmake")
+    set( WITH_ZLIB TRUE)
+    set( WITH_EIGEN TRUE)
+    set( VTK_VERSION "9.2")
+    set( VTK_BASE "${LIB_PRE_REQS}/VTK-${VTK_VERSION}.6")
+    set( VTK_DIR "${VTK_BASE}/lib/cmake/vtk-${VTK_VERSION}" CACHE PATH "Location of vtk-config.cmake")
 
     if(UNIX)
         set( VTK_LIBRARY_DIR "${VTK_DIR}/../.." CACHE PATH "Location of VTK shared libraries")
@@ -373,7 +352,7 @@ if(WITH_QT)     # Qt5
         message( FATAL_ERROR "Can't find Qt5! Set environment variable QT5 to the location of the library!")
     endif()
     get_filename_component( Qt5_TOOLS "$ENV{QT5}/../../Tools" REALPATH)
-    set( QT_INSTALLER_FRAMEWORK "${Qt5_TOOLS}/QtInstallerFramework/4.4/bin")
+    set( QT_INSTALLER_FRAMEWORK "${Qt5_TOOLS}/QtInstallerFramework/4.5/bin")
     set( QT_INF_BINARY_CREATOR "${QT_INSTALLER_FRAMEWORK}/binarycreator${CMAKE_EXECUTABLE_SUFFIX}")
     set( QT_INF_REPO_GEN "${QT_INSTALLER_FRAMEWORK}/repogen${CMAKE_EXECUTABLE_SUFFIX}")
 
@@ -410,11 +389,12 @@ endif()
 
 
 if(WITH_OPENCV) # OpenCV
-    set( OpenCV_BASE "${LIB_PRE_REQS}/opencv-4.6.0")
+    set( WITH_ZLIB TRUE)
+    set( OpenCV_BASE "${LIB_PRE_REQS}/opencv-4.7.0")
     set( OpenCV_DIR "${OpenCV_BASE}" CACHE PATH "Location of OpenCVConfig.cmake")
-    find_package( OpenCV 4.6 REQUIRED)
+    find_package( OpenCV 4.7 REQUIRED)
     if(WIN32)
-        set( OpenCV_MSVC "${OpenCV_DIR}/$ENV{PLATFORM}/vc16")
+        set( OpenCV_MSVC "${OpenCV_DIR}/x64/vc16")
         set( OpenCV_BIN "${OpenCV_MSVC}/bin" CACHE PATH "Location of OpenCV binary (DLL) files")
     endif()
     include_directories( ${OpenCV_INCLUDE_DIRS})
@@ -424,7 +404,7 @@ endif()
 
 if(WITH_BOOST)  # Boost
     set( _boost_ver_major "1")
-    set( _boost_ver_minor "73")
+    set( _boost_ver_minor "80")
     set( _boost_ver_patch "0")
     set( _boost_ver_str "${_boost_ver_major}_${_boost_ver_minor}_${_boost_ver_patch}")
     set( BOOST_ROOT "${LIB_PRE_REQS}/boost/boost_${_boost_ver_str}" CACHE PATH "Location of boost")
@@ -450,14 +430,6 @@ if(WITH_BOOST)  # Boost
 
     include_directories( ${Boost_INCLUDE_DIRS})
     set( Boost_LIBRARIES Boost::regex Boost::random Boost::thread Boost::filesystem Boost::system Boost::program_options)
-
-    #[[
-    message( STATUS "Boost_VERSION: ${Boost_VERSION}")
-    message( STATUS "Boost_LIB_VERSION: ${Boost_LIB_VERSION}")
-    message( STATUS "Boost_MAJOR_VERSION: ${Boost_MAJOR_VERSION}")
-    message( STATUS "Boost_MINOR_VERSION: ${Boost_MINOR_VERSION}")
-    message( STATUS "Boost_SUBMINOR_VERSION: ${Boost_SUBMINOR_VERSION}")
-    #]]
 
     set( CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${BOOST_LIBRARYDIR})
 endif()

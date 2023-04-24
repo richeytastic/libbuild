@@ -143,8 +143,9 @@ if __name__ == "__main__":
 
         if mb.cmake( libBldDir, libInsDir):
             time.sleep(2)   # To prevent cmake from repeating self calls
-            buildOk = mb.build()
-            if not buildOk:
+            if not mb.build():  # NB warnings printed in CMakeBuilder
+                break
+            if not mb.isLinkageOkay():  # NB warnings printed in CMakeBuilder
                 break
             if doInstall:
                 mb.install()

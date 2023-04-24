@@ -1,3 +1,19 @@
+if(WITH_EIGEN)
+    target_link_libraries( ${PROJECT_NAME} Eigen3::Eigen)
+endif()
+
+if(WITH_NANOFLANN)
+    target_link_libraries( ${PROJECT_NAME} nanoflann::nanoflann)
+endif()
+
+if(WITH_BOOST)
+    target_link_libraries( ${PROJECT_NAME} ${Boost_LIBRARIES})
+endif()
+
+if(WITH_ZLIB)
+    target_link_libraries( ${PROJECT_NAME} ${ZLIB_LIBRARIES})
+endif()
+
 if(WITH_TESTUTILS)
     target_link_libraries( ${PROJECT_NAME} ${TestUtils_LIBRARIES})
 endif()
@@ -43,7 +59,7 @@ if(WITH_RLIB)
 endif()
 
 if(WITH_ASSIMP)
-    target_link_libraries( ${PROJECT_NAME} ${ASSIMP_LIBRARIES})
+    target_link_libraries( ${PROJECT_NAME} assimp::assimp)
 endif()
 
 if(WITH_VTK)
@@ -54,20 +70,6 @@ if(WITH_OPENCV)
     target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS})
 endif()
 
-if(WITH_NANOFLANN)
-    target_link_libraries( ${PROJECT_NAME} nanoflann::nanoflann)
-endif()
-
-if(WITH_BOOST)
-    target_link_libraries( ${PROJECT_NAME} ${Boost_LIBRARIES})
-endif()
-
-#[[
-if(WITH_ZLIB)
-    target_link_libraries( ${PROJECT_NAME} ${ZLIB_LIBRARIES})
-endif()
-#]]
-
 if(WITH_CGAL)
     target_link_libraries( ${PROJECT_NAME} ${CGAL_LIBRARIES})
 endif()
@@ -77,7 +79,7 @@ if(WITH_DLIB)
 endif()
 
 if(WITH_LUA)
-    target_link_libraries( ${PROJECT_NAME} ${LUA_LIBRARIES})
+    target_link_libraries( ${PROJECT_NAME} ${LUA_LIBRARY})
 endif()
 
 if(WITH_RPASCALVOC)
